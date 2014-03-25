@@ -40,122 +40,117 @@ public class myJPanel extends JPanel {
         repaint();
     }
 
-
     public void drawLine(Color c, int x0, int x1, int y0, int y1) {
     	System.out.println("drawLine");
-    	int color = c.getRGB();
-    	
-        // Implement line drawing
-    	/* ablolute length end-start */
-        int dx = Math.abs(x1 - x0);
-        int dy = Math.abs(y1 - y0);
+    	/****************************BEGINING OF BREZENHAM'S LINE ALGORITHM*****************/
+    	// Implement line drawing 
+    	//ablolute length end-start 
+    	int dy = y1 - y0;
+        int dx = x1 - x0;
+        
+        // sx sy	- "1" if line from top to bottom "V"
+        //      	  "-1" if line from bottom to tom "^"
+        // errp		- the level of currently error from the line (want to be little) 
+        // xp,yp	-  current x,y point
+        int sx,sy,   errp,    xp,yp;
 
-        /*  1 if start value < end value  for x&y
-         *  else -1
-         */
-        int sx = (x0 < x1) ? 1 : -1;
-        int sy = (y0 < y1) ? 1 : -1;
+        
+        if (dx < 0){	// if line <--
+            dx = dx * -1;
+            sx = -1;
+        }
+        else{			// if line -->
+            sx = 1;
+        }
+        if (dy < 0){	// if line ^
+            dy = dy * -1;
+            sy = -1;
+        }
+        else{			// if line V
+            sy = 1;
+        }    
 
-        /* Positive value if x > y 
-         * 
-         * err = value if |________
-         * 
-         * else Negative
-         * err = -value if
-         * 		 |
-         * 		 |
-         *		 |__		
-         */
-        int err = dx - dy;
-
-        while (true) {
-        	putPixel(x0, y0, c);
-
-        	/* if this start&end point in the same place so -> finish */
-            if (x0 == x1 && y0 == y1) {
-            	System.out.println("break");
-                break;
-            }
-            
-            /* level of stairs in line */
-            int e2 = 2 * err;
-            
-            // if need to go in x
-            if (e2 > -dy) {
-            	System.out.println("x: " +e2 +"> -"+dy);
-            	// minimize the error
-                err = err - dy;
-                // upgrade x0
-                x0 = x0 + sx;
-            }
-
-            //if need to go in y
-            if (e2 < dx) {
-            	System.out.println("y: "+e2+"<"+dx);
-            	// upgrade the error
-                err = err + dx;
-                // upgrade y0
-                y0 = y0 + sy;
+        putPixel(x0, y0, c);
+        
+        if (dx > dy){						// line |________
+            errp = 2*dy - dx;
+            yp = y0;
+            for (xp=x0; xp!=x1; xp+=sx){
+                if (errp > 0){
+                    yp+=sy;
+                    errp -= dx * 2;
+                }
+                errp += dy * 2;
+                putPixel(xp, yp, c);
             }
         }
+        else{								// line	 |
+        	errp = 2*dx - dy;				// 		 |
+        	xp = x0;						//		 |__
+        	for (yp=y0; yp!=y1; yp+=sy){
+                if (errp > 0){
+                    xp+=sx;
+                    errp -= dy * 2;
+                }
+                errp += dx * 2;
+                putPixel(xp, yp, c);
+            }
+        }
+        /******************************END OF BRAZENHAM LINE ALGORITHM***************************/
         repaint();
     }
 
     public int calculateRadius(int x0, int y0, int x1, int y1){
     	// Length from start to end
     	int counter=0;
-    	/* ablolute length end-start */
-        int dx = Math.abs(x1 - x0);
-        int dy = Math.abs(y1 - y0);
+//    	/* ablolute length end-start */
+    	/****************************BEGINING OF BREZENHAM'S LINE ALGORITHM*****************/
+        int dy = y1 - y0;
+        int dx = x1 - x0;
+        
+        int sx,sy,errp,xp,yp;
 
-        /*  1 if start value < end value  for x&y
-         *  else -1
-         */
-        int sx = (x0 < x1) ? 1 : -1;
-        int sy = (y0 < y1) ? 1 : -1;
+        if (dx < 0){
+            dx = dx * -1;
+            sx = -1;
+        }
+        else{
+            sx = 1;
+        }
+        if (dy < 0){
+            dy = dy * -1;
+            sy = -1;
+        }
+        else{
+            sy = 1;
+        }    
 
-        /* Positive value if x > y 
-         * 
-         * err = value if |________
-         * 
-         * else Negative
-         * err = -value if
-         * 		 |
-         * 		 |
-         *		 |__		
-         */
-        int err = dx - dy;
-
-        while (true) {
-        	counter++;
-
-        	/* if this start&end point in the same place so -> finish */
-            if (x0 == x1 && y0 == y1) {
-            	System.out.println("break");
-                return counter;
-            }
-            
-            /* levels of steps in line */
-            int e2 = 2 * err;
-            
-            // if need to go in x
-            if (e2 > -dy) {
-            	System.out.println("x: " +e2 +"> -"+dy);
-            	// minimize the error
-                err = err - dy;
-                // upgrade x0
-                x0 = x0 + sx;
-            }
-
-            //if need to go in y
-            if (e2 < dx) {
-            	System.out.println("y: "+e2+"<"+dx);
-            	// upgrade the error
-                err = err + dx;
-                // upgrade y0
-                y0 = y0 + sy;
+        counter++;
+        if (dx > dy){
+            errp = 2*dy - dx;
+            yp = y0;
+            for (xp=x0; xp!=x1; xp+=sx){
+                if (errp > 0){
+                    yp+=sy;
+                    errp -= dx * 2;
+                }
+                errp += dy * 2;
+                counter++;
             }
         }
+        else{
+            errp = 2*dx - dy;
+            xp = x0;
+            for (yp=y0; yp!=y1; yp+=sy){
+                if (errp > 0){
+                    xp+=sx;
+                    errp -= dy * 2;
+                }
+                errp += dx * 2;
+                counter++;
+            }
+        }
+        return counter;
     }
     
 	  public void drawCircle(Color c, int x,int y, int radiusX, int radiusY) {

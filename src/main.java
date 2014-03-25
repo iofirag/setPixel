@@ -79,7 +79,7 @@ public class main {
         //menu.add(menu_clearScrean);
         //menu.setMnemonic(KeyEvent.VK_M);
         //************************************************
-        
+        System.out.println(8<<3);
         
         // Objects Menu
         JMenu objectsMenu = new JMenu ("Objects");
