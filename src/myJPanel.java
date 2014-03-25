@@ -153,28 +153,30 @@ public class myJPanel extends JPanel {
         return counter;
     }
     
-	  public void drawCircle(Color c, int x,int y, int radiusX, int radiusY) {
-		  int radius = calculateRadius(x,y, radiusX, radiusY);
+	  public void drawCircle(Color c, int x0,int y0, int radiusX, int radiusY) {
+		  int radius = calculateRadius(x0,y0, radiusX, radiusY);
 		  // Implement Circle drawing
-		  int discriminant = (5 - radius<<2)>>2 ;
-		    int i = 0, j = radius ;
-		    while (i<=j) {
-		        putPixel(x+i,y-j,c) ;
-		        putPixel(x+j,y-i,c) ;
-		        putPixel(x+i,y+j,c) ;
-		        putPixel(x+j,y+i,c) ;
-		        putPixel(x-i,y-j,c) ;
-		        putPixel(x-j,y-i,c) ;
-		        putPixel(x-i,y+j,c) ;
-		        putPixel(x-j,y+i,c) ;
-		        i++ ;
-		        if (discriminant<0) {                
-		            discriminant += (i<<1) + 1 ;
-		        } else {
-		            j-- ;
-		            discriminant += (1 + i - j)<<1 ;
-		        }
-		    }
+		  int x = radius;
+		  int y = 0;
+		  int radiusError = 1-x;
+		 
+		  while(x >= y){
+			  putPixel(x + x0, y + y0, c);
+			  putPixel(y + x0, x + y0, c);
+			  putPixel(-x + x0, y + y0, c);
+			  putPixel(-y + x0, x + y0, c);
+			  putPixel(-x + x0, -y + y0, c);
+			  putPixel(-y + x0, -x + y0, c);
+			  putPixel(x + x0, -y + y0, c);
+			  putPixel(y + x0, -x + y0, c);
+			  y++;
+			  if (radiusError<0){
+				  radiusError += 2 * y + 1;
+			  }else {
+				  x--;
+				  radiusError+= 2 * (y - x + 1);
+			  }
+		  }
 		  repaint();
 	  }
 
