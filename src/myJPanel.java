@@ -54,7 +54,6 @@ public class myJPanel extends JPanel {
         // xp,yp	-  current x,y point
         int sx,sy,   errp,    xp,yp;
 
-        
         if (dx < 0){	// if line <--
             dx = dx * -1;
             sx = -1;

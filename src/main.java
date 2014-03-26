@@ -16,10 +16,12 @@ import java.io.IOException;
 import java.util.Date;
 
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 
 
@@ -35,16 +37,18 @@ public class main {
 	static int lastDrag_y=0;
 	
 	static int shape = 1;		// 1=Line   2=Circle   3=Rectangle
+	static int poligon_vertex=3;	//3=Triangle (default)    4=Rectangle    5=.....
 	static Color color = Color.black;
 	
+	
 	public static void main(String[] args) {
-        final int width = 350;
-        final int height = 280;
+        final int width = 900;
+        final int height = 600;
 
         
         
         /* java window - the container managed the frame */
-        JFrame frame = new JFrame("Direct draw demo");       
+        final JFrame frame = new JFrame("Direct draw demo");       
         
         /* specific frame */
         pane = new myJPanel(width, height);
@@ -83,6 +87,7 @@ public class main {
         // Objects Menu
         JMenu objectsMenu = new JMenu ("Objects");
         JMenuItem objectItem_line = new JMenuItem("Line");
+        objectItem_line.setMnemonic(KeyEvent.VK_F1);
         objectItem_line.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -90,6 +95,7 @@ public class main {
 			}
 		});
         JMenuItem objectItem_circle = new JMenuItem("Circle");
+        objectItem_circle.setMnemonic(KeyEvent.VK_F2);
         objectItem_circle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -97,10 +103,15 @@ public class main {
 			}
 		});
         JMenuItem objectItem_poligon = new JMenuItem("Poligon");
+        objectItem_poligon.setMnemonic(KeyEvent.VK_F3);
         objectItem_poligon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				shape=3;
+				
+				//custom title, custom icon
+				String result = JOptionPane.showInputDialog(frame, "Enter poligon vertex:");
+				poligon_vertex= Integer.parseInt(result);
 			}
 		});
         objectsMenu.add(objectItem_line);
