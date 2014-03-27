@@ -86,6 +86,7 @@ public class main {
         
         // Objects Menu
         JMenu objectsMenu = new JMenu ("Objects");
+        objectsMenu.setMnemonic(KeyEvent.VK_O);
         JMenuItem objectItem_line = new JMenuItem("Line");
         objectItem_line.setMnemonic(KeyEvent.VK_F1);
         objectItem_line.addActionListener(new ActionListener() {
@@ -121,6 +122,7 @@ public class main {
         
         // Color Menu
         JMenu colorMenu = new JMenu("Color");
+        colorMenu.setMnemonic(KeyEvent.VK_C);
         JMenuItem colorMenu_black = new JMenuItem("Black");
         colorMenu_black.addActionListener(new ActionListener() {
 			@Override
