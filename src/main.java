@@ -4,6 +4,7 @@
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -12,9 +13,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -22,9 +29,20 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 public class main {
-	static int numofPoints=0;
-	static List<Point> bezierPoints=new ArrayList<>();
+//	static List<Line> lines_L;
+//	static List<Circle> circle_L;
+//	static List<Poligon> poligon_L;
+//	static List<Bezier> bezier_L;
+	static List<Shape> shapeList;
+	
+	static List <String>lines = null;
+	
+	static int numOfPoints=0;
+	static List<Point> linePoints=new ArrayList<>();
+	static List<Point> circlePoints=new ArrayList<>();
 	static List<Point> polygonPoints=new ArrayList<>();
+	static List<Point> bezierPoints=new ArrayList<>();
+	
 	static myJPanel pane;
 	static int poligon_vertex =0;
 	static Point pointPressed =null;
@@ -56,6 +74,67 @@ public class main {
 
       	//Create the menu bar.
         JMenuBar menuBar = new JMenuBar();
+        
+        //File Menu
+        JMenu fileMenu = new JMenu ("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        JMenuItem openFile = new JMenuItem("Open file..");
+        //objectItem_line.setMnemonic(KeyEvent.VK_F1);
+        openFile.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Component c = null;
+				String pathString = promptForFile(c);
+				Path path = Paths.get(pathString);
+
+				try {
+					//parse can open .TXT format that saved in type UTF-8
+					lines = Files.readAllLines(path, StandardCharsets.US_ASCII);
+					parseLines_ToObjects(lines);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+			}
+
+			private void parseLines_ToObjects(List<String> lines) {
+				//run on every line
+				for (String line : lines){
+					String numOfObject_string = line.substring(0, 1);  	//take the first character
+					line = line.substring(2);			//reduce the line
+					
+					int objectNumber = Integer.parseInt(numOfObject_string);
+					Object ob;
+					switch (objectNumber){
+					case 1: 
+						ob = new Line();
+						
+						char[] charArray = line.toCharArray();
+						for(int i=0; i<charArray.length; i++){
+							if(!charArray.equals(',')){
+								
+							}
+						}
+						break;
+					case 2:
+						ob = new Circle();
+						break;
+					case 3:
+						ob = new Poligon();
+						break;
+					case 4:
+						ob = new Bezier();
+						break;
+						default:
+							System.out.println("line error.");
+							break;
+					}
+				}
+			}
+		});
+        fileMenu.add(openFile);
+        
+        // Clear Screen button
         JMenuItem menu_clearScreen = new JMenuItem("Clear Screen");
         menu_clearScreen.addActionListener(new ActionListener() {
 			@Override
@@ -63,8 +142,7 @@ public class main {
 				pane.fillCanvas(Color.white);
 			}
 		});
-      
-        
+
         // Objects Menu
         JMenu objectsMenu = new JMenu ("Objects");
         objectsMenu.setMnemonic(KeyEvent.VK_O);
@@ -175,6 +253,7 @@ public class main {
         colorMenu.add(colorMenu_yellow);
         //*********************************************
         
+        menuBar.add(fileMenu);
         menuBar.add(objectsMenu);
         menuBar.add(colorMenu);
         menuBar.add(menu_clearScreen);
@@ -200,25 +279,30 @@ public class main {
 				switch (shape){
 				// Draw a line
 				case 1: 
-					if (width- pointRelease.getX() >=0 && height- pointRelease.getY() >=0 )
-						pane.drawLine(color, (int)pointPressed.getX(), (int)pointRelease.getX(), (int)pointPressed.getY(), (int)pointRelease.getY());
-					else pane.drawLine(color, (int)pointPressed.getX(), (int)lastDrag_x, (int)pointPressed.getY(), (int)lastDrag_y);
+					linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
+					linePoints.add(new Point((int)lastDrag_x,(int)lastDrag_y));	//end
+					
+					pane.drawLine(color, linePoints);
+					linePoints.clear(); 
 					break;
 				//Draw a circle
 				case 2:
-					pane.drawCircle(color, pointPressed.x, pointPressed.y, pointRelease.x, pointRelease.y);
+					//calculate radius
+					circlePoints.add(new Point(pointPressed.x, pointPressed.y));
+					int radius = pane.calculateRadius(pointPressed.x, pointPressed.y, pointRelease.x, pointRelease.y);
+					
+					pane.drawCircle(color, circlePoints, radius);
+					circlePoints.clear();
 					break;
 				//Draw a polygon
 				case 3:
 					polygonPoints.add(new Point(pointPressed.x,pointPressed.y));
 					polygonPoints.add(new Point(pointRelease.x,pointRelease.y));
+					
 					pane.regularPolygon(color ,polygonPoints, poligon_vertex);
 					polygonPoints.clear();
-
 					break;
-
 				}
-
 			}
 
 			@Override
@@ -241,15 +325,14 @@ public class main {
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if ((shape==4) && (numofPoints<4)){ //shape 4 = bezier curve
-					pane.putSuperPixel(e.getX(),e.getY(),color);
-					numofPoints++;
-					bezierPoints.add(new Point(e.getX(),e.getY()));
-					if (numofPoints==4)
-					{
-						numofPoints=0;
-						pane.drawBezierCurve(color,bezierPoints);
-						bezierPoints=new ArrayList<>();
+				if ((shape==4) && (numOfPoints<4)){ //shape 4 = bezier curve
+					pane.putSuperPixel(e.getX(),e.getY(),color);	//put big pixel
+					numOfPoints++;									//counter
+					bezierPoints.add(new Point(e.getX(),e.getY()));	//save point to list
+					if (numOfPoints==4) {
+						pane.drawBezierCurve(color,bezierPoints);	//draw
+						bezierPoints=new ArrayList<>();	//init	why not use .clear() ??
+						numOfPoints=0;					//init
 					}
 				}
 
@@ -269,10 +352,23 @@ public class main {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				System.out.println("dragged");
-				lastDrag_x= (int) e.getPoint().getX();
-				lastDrag_y= (int) e.getPoint().getY();
+				lastDrag_x= (int) e.getPoint().getX()-8;
+				lastDrag_y= (int) e.getPoint().getY()-53;
 			}
 		});
         
     }
+
+	public static String promptForFile( Component parent )
+	{
+	    JFileChooser fc = new JFileChooser();
+	    fc.setFileSelectionMode( JFileChooser.FILES_ONLY );
+	
+	    if( fc.showOpenDialog( parent ) == JFileChooser.APPROVE_OPTION )
+	    {
+	        return fc.getSelectedFile().getAbsolutePath();
+	    }
+	
+	    return null;
+	}
 }

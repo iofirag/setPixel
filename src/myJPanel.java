@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
@@ -46,8 +47,12 @@ public class myJPanel extends JPanel {
 		repaint();
 	}
 
-	public void drawLine(Color c, int x0, int x1, int y0, int y1) {
+	public void drawLine(Color c, List<Point> points) {
 		System.out.println("drawLine");
+		int x0=(int)points.get(0).getX();
+		int y0=(int)points.get(0).getY();
+		int x1=(int)points.get(1).getX();
+		int y1=(int)points.get(1).getY();
 		/**************************** BEGINING OF BREZENHAM'S LINE ALGORITHM *****************/
 		// Implement line drawing
 		// ablolute length end-start
@@ -102,7 +107,7 @@ public class myJPanel extends JPanel {
 		repaint();
 	}
 
-	public int calculateRadius(int x0, int y0, int x1, int y1) {
+	static public int calculateRadius(int x0, int y0, int x1, int y1) {
 		// Length from start to end
 		int counter = 0;
 		// /* ablolute length end-start */
@@ -152,22 +157,22 @@ public class myJPanel extends JPanel {
 		return counter;
 	}
 
+
 	// Implementation of circle drawing algorithm
-	public void drawCircle(Color c, int x0, int y0, int radiusX, int radiusY) {
-		int radius = calculateRadius(x0, y0, radiusX, radiusY);
+	public void drawCircle(Color c, List<Point> points, int radius) {
 		int x = radius;
 		int y = 0;
 		int radiusError = 1 - x;
 
 		while (x >= y) {
-			putPixel(x + x0, y + y0, c);
-			putPixel(y + x0, x + y0, c);
-			putPixel(-x + x0, y + y0, c);
-			putPixel(-y + x0, x + y0, c);
-			putPixel(-x + x0, -y + y0, c);
-			putPixel(-y + x0, -x + y0, c);
-			putPixel(x + x0, -y + y0, c);
-			putPixel(y + x0, -x + y0, c);
+			putPixel(x + (int)points.get(0).getX(), y + (int)points.get(0).getY(), c);
+			putPixel(y + (int)points.get(0).getX(), x + (int)points.get(0).getY(), c);
+			putPixel(-x + (int)points.get(0).getX(), y + (int)points.get(0).getY(), c);
+			putPixel(-y + (int)points.get(0).getX(), x + (int)points.get(0).getY(), c);
+			putPixel(-x + (int)points.get(0).getX(), -y + (int)points.get(0).getY(), c);
+			putPixel(-y + (int)points.get(0).getX(), -x + (int)points.get(0).getY(), c);
+			putPixel(x + (int)points.get(0).getX(), -y + (int)points.get(0).getY(), c);
+			putPixel(y + (int)points.get(0).getX(), -x + (int)points.get(0).getY(), c);
 			y++;
 			if (radiusError < 0) {
 				radiusError += 2 * y + 1;
@@ -180,8 +185,7 @@ public class myJPanel extends JPanel {
 	}
 
 	// Polygon drawing
-	public void regularPolygon(Color c, List<Point> polygonPoints,
-			int pointsNumber) {
+	public void regularPolygon(Color c, List<Point> polygonPoints,int pointsNumber) {
 		Point p[] = new Point[pointsNumber];
 		int disatance = (int) Math
 				.sqrt((polygonPoints.get(0).getX() - polygonPoints.get(1)
@@ -205,16 +209,14 @@ public class myJPanel extends JPanel {
 		Point pointToClose = new Point(((int) (p[0].getX())),
 				(int) (p[0].getY()));
 		for (int i = 0; i < pointsNumber; i++) {
-			polygonPoints.add(new Point((int) (p[i].getX()),
-					(int) (p[i].getY())));
-			drawLine(c, polygonPoints.get(0).x, polygonPoints.get(1).x,
-					polygonPoints.get(0).y, polygonPoints.get(1).y);
+			polygonPoints.add(new Point((int) (p[i].getX()),(int) (p[i].getY())));
+			
+			drawLine(c, polygonPoints);
 			polygonPoints.remove(0);
 		}
 		// Drawing the last line to a point the started the shape.
 		polygonPoints.add(pointToClose);
-		drawLine(c, polygonPoints.get(0).x, pointToClose.x,
-				polygonPoints.get(0).y, pointToClose.y);
+		drawLine(c, polygonPoints);
 	}
 
 	// This function recieves 4 points from the user using mouse listeners and
@@ -253,8 +255,11 @@ public class myJPanel extends JPanel {
 			pointY = (int) ((resultsForY.get(0, 0) * Math.pow(t, 3))
 					+ (resultsForY.get(1, 0) * Math.pow(t, 2))
 					+ (resultsForY.get(2, 0) * t) + (resultsForY.get(3, 0)) - 53);
-
-			drawLine(color, prevX, pointX, prevY, pointY);
+			
+			List<Point> temp=new ArrayList<>();
+			temp.add(new Point(prevX,prevY));
+			temp.add(new Point(pointX,pointY));
+			drawLine(color, temp);
 			t += 0.001;
 			// Setting current point to be the previous point. we will draw the
 			// next line starting this from this point
@@ -263,8 +268,7 @@ public class myJPanel extends JPanel {
 		}
 
 		// drawing last line
-		drawLine(color, pointX, points.get(3).x - 8, pointY,
-				points.get(3).y - 53);
+		drawLine(color, pointX, points.get(3).x - 8, pointY, points.get(3).y - 53);
 	}
 
 	// This function recieves X or Y values and and multiplies them with Bezier
