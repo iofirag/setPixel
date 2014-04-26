@@ -240,10 +240,10 @@ public class myJPanel extends JPanel {
 		// this is the point we draw the line FROM
 		prevX = (int) ((resultsForX.get(0, 0) * Math.pow(t, 3))
 				+ (resultsForX.get(1, 0) * Math.pow(t, 2))
-				+ (resultsForX.get(2, 0) * t) + (resultsForX.get(3, 0)) - 8);
+				+ (resultsForX.get(2, 0) * t) + (resultsForX.get(3, 0)));
 		prevY = (int) ((resultsForY.get(0, 0) * Math.pow(t, 3))
 				+ (resultsForY.get(1, 0) * Math.pow(t, 2))
-				+ (resultsForY.get(2, 0) * t) + (resultsForY.get(3, 0)) - 53);
+				+ (resultsForY.get(2, 0) * t) + (resultsForY.get(3, 0)));
 
 		while (t <= 1.00) {
 			// calculating x and y pixel position using bezier curve formula,
@@ -251,10 +251,10 @@ public class myJPanel extends JPanel {
 			// this is the point we draw the line TO
 			pointX = (int) ((resultsForX.get(0, 0) * Math.pow(t, 3))
 					+ (resultsForX.get(1, 0) * Math.pow(t, 2))
-					+ (resultsForX.get(2, 0) * t) + (resultsForX.get(3, 0)) - 8);
+					+ (resultsForX.get(2, 0) * t) + (resultsForX.get(3, 0)));
 			pointY = (int) ((resultsForY.get(0, 0) * Math.pow(t, 3))
 					+ (resultsForY.get(1, 0) * Math.pow(t, 2))
-					+ (resultsForY.get(2, 0) * t) + (resultsForY.get(3, 0)) - 53);
+					+ (resultsForY.get(2, 0) * t) + (resultsForY.get(3, 0)));
 			
 			List<Point> temp=new ArrayList<>();
 			temp.add(new Point(prevX,prevY));
@@ -266,9 +266,15 @@ public class myJPanel extends JPanel {
 			prevX = pointX;
 			prevY = pointY;
 		}
-
+		
+		
 		// drawing last line
-		drawLine(color, pointX, points.get(3).x - 8, pointY, points.get(3).y - 53);
+		//List<Point> temp2=new ArrayList<>();
+		//temp2.add(new Point(points.get(3).x, points.get(3).y));
+		//temp2.add(new Point(pointX, pointY));
+		//drawLine(color, pointX, points.get(3).x, pointY, points.get(3).y);
+		//drawLine(color,temp2);
+		//temp2.clear();
 	}
 
 	// This function recieves X or Y values and and multiplies them with Bezier
@@ -311,8 +317,8 @@ public class myJPanel extends JPanel {
 		int color = c.getRGB();
 		try {
 			// fixing point accuracy
-			x -= 8;
-			y -= 53;
+//			x -= 8;
+//			y -= 53;
 			canvas.setRGB(x, y, color);
 			canvas.setRGB(x, y - 1, color);
 			canvas.setRGB(x, y - 2, color);

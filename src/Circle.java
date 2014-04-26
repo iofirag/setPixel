@@ -1,55 +1,58 @@
 import java.awt.Color;
+import java.awt.Point;
+import java.util.List;
 
 
 public class Circle extends Shape {
-	int x0;
-	int y0;
-	float radius;
 	Color c=Color.BLACK;
+	List<Point> circlePoint;
+	float radius;
 	
 	/* Ctor. */
 	public Circle() {
 		super();
 	}
-	public Circle(int x0, int y0, int releaseX, int releaseY, float radius) {
+
+	public Circle(Color c, List<Point> linePoints, float radius) {
 		super();
-		this.x0 = x0;
-		this.y0 = y0;
-		this.radius = radius;
-	}
-	public Circle(int x0, int y0, float radius, Color c) {
-		super();
-		this.x0 = x0;
-		this.y0 = y0;
-		this.radius = radius;
 		this.c = c;
+		this.circlePoint = linePoints;
+		this.radius = radius;
 	}
+	public Circle(List<Point> linePoints, float radius) {
+		super();
+		this.circlePoint = linePoints;
+		this.radius = radius;
+	}
+
 	
 	/* Getters & Setters */
-	public int getX0() {
-		return x0;
-	}
-	public void setX0(int x0) {
-		this.x0 = x0;
-	}
-	public int getY0() {
-		return y0;
-	}
-	public void setY0(int y0) {
-		this.y0 = y0;
-	}
-	public float getRadius() {
-		return radius;
-	}
-	public void setRadius(float radius) {
-		this.radius = radius;
-	}
 	public Color getC() {
 		return c;
 	}
+
 	public void setC(Color c) {
 		this.c = c;
 	}
+
+	public List<Point> getLinePoints() {
+		return circlePoint;
+	}
+
+	public void setLinePoints(List<Point> linePoints) {
+		this.circlePoint = linePoints;
+	}
+
+	public float getRadius() {
+		return radius;
+	}
+
+	public void setRadius(float radius) {
+		this.radius = radius;
+	}
+	
+	
+	
 	
 	
 	

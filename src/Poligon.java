@@ -4,9 +4,10 @@ import java.util.List;
 
 
 public class Poligon extends Shape {
+	Color c=Color.BLACK;
 	List<Point> polygonPoints;
 	int poligon_vertex;
-	Color c=Color.BLACK;
+	
 	
 	/* Ctor. */
 	public Poligon() {
@@ -17,11 +18,12 @@ public class Poligon extends Shape {
 		this.polygonPoints = polygonPoints;
 		this.poligon_vertex = poligon_vertex;
 	}
-	public Poligon(List<Point> polygonPoints, int poligon_vertex, Color c) {
+	public Poligon(Color c, List<Point> polygonPoints, int poligon_vertex) {
 		super();
+		this.c = c;
 		this.polygonPoints = polygonPoints;
 		this.poligon_vertex = poligon_vertex;
-		this.c = c;
+		
 	}
 	
 	/* Getters & Setters */

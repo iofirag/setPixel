@@ -33,7 +33,7 @@ public class main {
 //	static List<Circle> circle_L;
 //	static List<Poligon> poligon_L;
 //	static List<Bezier> bezier_L;
-	static List<Shape> shapeList;
+	static List<Shape> shapeList=new ArrayList<>();
 	
 	static List <String>lines = null;
 	
@@ -49,6 +49,7 @@ public class main {
 	static Point pointRelease =null;
 	static int lastDrag_x=0;
 	static int lastDrag_y=0;
+	static boolean MouseExitFromWindow=false;
 	static int shape = 1;		// 1=Line   2=Circle   3=Polygon 4=Bezier curve
 	static Color color = Color.black;
 
@@ -98,36 +99,76 @@ public class main {
 			}
 
 			private void parseLines_ToObjects(List<String> lines) {
-				//run on every line
+				//run on every line in file
 				for (String line : lines){
 					String numOfObject_string = line.substring(0, 1);  	//take the first character
-					line = line.substring(2);			//reduce the line
+					line = line.substring(2);			//delete from line the [first and second] character at start of the line
 					
-					int objectNumber = Integer.parseInt(numOfObject_string);
-					Object ob;
+					int objectNumber = Integer.parseInt(numOfObject_string);	//identify wich object is it
+					char[] charArray = line.toCharArray();	//make from line char array[]
+					
+					Shape ob;
+					int psikCntr=0;
+					StringBuilder buff_string=null;
+					int numBuff_x=-999999;	//still not initialize
+					int numBuff_y=-999999;	//still not initialize
+					
+					Color color = null;
+					List<Point> pointsBuff=new ArrayList<>();
+					
 					switch (objectNumber){
 					case 1: 
-						ob = new Line();
-						
-						char[] charArray = line.toCharArray();
-						for(int i=0; i<charArray.length; i++){
-							if(!charArray.equals(',')){
-								
+						for (char c :line.toCharArray()){
+							if(c == ',' || c == '\n'){
+								psikCntr++;
+								switch (psikCntr){
+								case 1:	//x0 point
+									numBuff_x = Integer.parseInt(buff_string.toString());
+									break;
+								case 2:	//y0 point
+									numBuff_y = Integer.parseInt(buff_string.toString());
+									pointsBuff.add(new Point(numBuff_x, numBuff_y));
+									break;
+								case 3:	//x1 point
+									numBuff_x = Integer.parseInt(buff_string.toString());
+									break;
+								case 4:	//y1 point
+									numBuff_y = Integer.parseInt(buff_string.toString());
+									pointsBuff.add(new Point(numBuff_x, numBuff_y));
+									break;
+								case 5:	//color string
+									color = Color.getColor(buff_string.toString());
+									break;
+								}
+								buff_string=null;	//init
+							}else{
+								buff_string.append(c);	//build the number
 							}
+							ob = new Line(color, pointsBuff);	//create instance
+							shapeList.add(ob);					//add to list
+							psikCntr=0;							//init
 						}
 						break;
 					case 2:
-						ob = new Circle();
+						for (char c :line.toCharArray()){
+							
+						}
 						break;
 					case 3:
-						ob = new Poligon();
+						for (char c :line.toCharArray()){
+							
+						}
 						break;
 					case 4:
-						ob = new Bezier();
+						for (char c :line.toCharArray()){
+							
+						}
 						break;
-						default:
-							System.out.println("line error.");
-							break;
+						
+						
+					default:
+						System.out.println("line error.");
+						break;
 					}
 				}
 			}
@@ -279,12 +320,21 @@ public class main {
 				switch (shape){
 				// Draw a line
 				case 1: 
-					linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
-					linePoints.add(new Point((int)lastDrag_x,(int)lastDrag_y));	//end
+					 
 					
-					pane.drawLine(color, linePoints);
-					linePoints.clear(); 
-					break;
+					if (width- pointRelease.getX() >=0 && height- pointRelease.getY() >=0 ){
+						linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
+  						linePoints.add(new Point((int)pointRelease.getX(),(int)pointRelease.getY()));	//end
+  						pane.drawLine(color, linePoints);
+  						linePoints.clear();
+					}
+  					else{ 
+  						linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
+  						linePoints.add(new Point((int)lastDrag_x,(int)lastDrag_y));	//end	
+  						pane.drawLine(color, linePoints);
+  						linePoints.clear();
+  					}
+  					break;
 				//Draw a circle
 				case 2:
 					//calculate radius
@@ -316,7 +366,7 @@ public class main {
 			@Override
 			public void mouseExited(MouseEvent e) {
 				System.out.println("exited");
-
+				MouseExitFromWindow=true;
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {				
@@ -326,9 +376,9 @@ public class main {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if ((shape==4) && (numOfPoints<4)){ //shape 4 = bezier curve
-					pane.putSuperPixel(e.getX(),e.getY(),color);	//put big pixel
+					pane.putSuperPixel(e.getX()-8,e.getY()-53,color);	//put big pixel + Fix
 					numOfPoints++;									//counter
-					bezierPoints.add(new Point(e.getX(),e.getY()));	//save point to list
+					bezierPoints.add(new Point(e.getX()-8,e.getY()-53));	//save point to list + Fix
 					if (numOfPoints==4) {
 						pane.drawBezierCurve(color,bezierPoints);	//draw
 						bezierPoints=new ArrayList<>();	//init	why not use .clear() ??
@@ -352,8 +402,8 @@ public class main {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				System.out.println("dragged");
-				lastDrag_x= (int) e.getPoint().getX()-8;
-				lastDrag_y= (int) e.getPoint().getY()-53;
+				lastDrag_x= (int) e.getPoint().getX()-8;		//Fix
+				lastDrag_y= (int) e.getPoint().getY()-53;		//Fix
 			}
 		});
         

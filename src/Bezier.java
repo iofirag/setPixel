@@ -2,8 +2,8 @@ import java.awt.Color;
 
 
 public class Bezier extends Shape {
-	int bezierPoints;
 	Color c=Color.BLACK;
+	int bezierPoints;
 	
 	/* Ctor. */
 	public Bezier() {
@@ -13,10 +13,10 @@ public class Bezier extends Shape {
 		super();
 		this.bezierPoints = bezierPoints;
 	}
-	public Bezier(int bezierPoints, Color c) {
+	public Bezier(Color c, int bezierPoints) {
 		super();
-		this.bezierPoints = bezierPoints;
 		this.c = c;
+		this.bezierPoints = bezierPoints;
 	}
 
 	/* Getters & Setters */
