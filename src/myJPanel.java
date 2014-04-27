@@ -266,15 +266,6 @@ public class myJPanel extends JPanel {
 			prevX = pointX;
 			prevY = pointY;
 		}
-		
-		
-		// drawing last line
-		//List<Point> temp2=new ArrayList<>();
-		//temp2.add(new Point(points.get(3).x, points.get(3).y));
-		//temp2.add(new Point(pointX, pointY));
-		//drawLine(color, pointX, points.get(3).x, pointY, points.get(3).y);
-		//drawLine(color,temp2);
-		//temp2.clear();
 	}
 
 	// This function recieves X or Y values and and multiplies them with Bezier

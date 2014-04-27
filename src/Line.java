@@ -2,7 +2,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.List;
 
-
 public class Line extends Shape {
 	Color c=Color.BLACK;
 	List<Point> linePoints;
@@ -20,6 +19,9 @@ public class Line extends Shape {
 		super();
 		this.linePoints = linePoints;
 	}
+	
+	
+	/* Getters & Setters */
 	public Color getC() {
 		return c;
 	}
@@ -33,6 +35,11 @@ public class Line extends Shape {
 		this.linePoints = linePoints;
 	}
 	
-	/* Getters & Setters */
+	
+	/* Draw*/
+	@Override
+	public void draw(){
+		main.pane.drawLine(c, linePoints);
+	}
 
 }

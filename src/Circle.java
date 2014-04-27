@@ -6,22 +6,22 @@ import java.util.List;
 public class Circle extends Shape {
 	Color c=Color.BLACK;
 	List<Point> circlePoint;
-	float radius;
+	int radius;
 	
 	/* Ctor. */
 	public Circle() {
 		super();
 	}
 
-	public Circle(Color c, List<Point> linePoints, float radius) {
+	public Circle(Color c, List<Point> circlePoint, int radius) {
 		super();
 		this.c = c;
-		this.circlePoint = linePoints;
+		this.circlePoint = circlePoint;
 		this.radius = radius;
 	}
-	public Circle(List<Point> linePoints, float radius) {
+	public Circle(List<Point> circlePoint, int radius) {
 		super();
-		this.circlePoint = linePoints;
+		this.circlePoint = circlePoint;
 		this.radius = radius;
 	}
 
@@ -39,21 +39,25 @@ public class Circle extends Shape {
 		return circlePoint;
 	}
 
-	public void setLinePoints(List<Point> linePoints) {
-		this.circlePoint = linePoints;
+	public void setLinePoints(List<Point> circlePoint) {
+		this.circlePoint = circlePoint;
 	}
 
-	public float getRadius() {
+	public int getRadius() {
 		return radius;
 	}
 
-	public void setRadius(float radius) {
+	public void setRadius(int radius) {
 		this.radius = radius;
 	}
 	
 	
 	
-	
+	/* Draw*/
+	@Override
+	public void draw(){
+		main.pane.drawCircle(c, circlePoint, radius);
+	}
 	
 	
 }

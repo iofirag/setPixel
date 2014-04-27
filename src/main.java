@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -91,7 +92,11 @@ public class main {
 				try {
 					//parse can open .TXT format that saved in type UTF-8
 					lines = Files.readAllLines(path, StandardCharsets.US_ASCII);
-					parseLines_ToObjects(lines);
+					parseLines_ToObjects(lines);	//save all objects in shapeList
+					pane.fillCanvas(Color.white);
+					for (Shape s :shapeList){
+						s.draw();
+					}
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -109,7 +114,7 @@ public class main {
 					
 					Shape ob;
 					int psikCntr=0;
-					StringBuilder buff_string=null;
+					StringBuilder buff_string=new StringBuilder();
 					int numBuff_x=-999999;	//still not initialize
 					int numBuff_y=-999999;	//still not initialize
 					
@@ -117,9 +122,44 @@ public class main {
 					List<Point> pointsBuff=new ArrayList<>();
 					
 					switch (objectNumber){
+					// Line
 					case 1: 
 						for (char c :line.toCharArray()){
-							if(c == ',' || c == '\n'){
+							if(c == ',' || c == '.'){
+								psikCntr++;
+								switch (psikCntr){
+								case 1:	//x0 point
+								case 3:	//x1 point
+									numBuff_x = Integer.parseInt(buff_string.toString());
+									break;
+								case 2:	//y0 point
+								case 4:	//y1 point
+									numBuff_y = Integer.parseInt(buff_string.toString());
+									pointsBuff.add(new Point(numBuff_x, numBuff_y));
+									break;
+								case 5:	//color
+									try {
+									    Field field = Class.forName("java.awt.Color").getField(buff_string.toString());
+									    color = (Color)field.get(null);
+									} catch (Exception e) {
+									    color = null; // Not defined
+									}
+									break;
+								}
+								buff_string=new StringBuilder();	//init
+							}else{
+								buff_string.append(c);	//build the number
+							}
+						}
+						ob = new Line(color, pointsBuff);	//create instance
+						shapeList.add(ob);					//add to list
+						psikCntr=0;							//init
+						break;
+					// Circle
+					case 2:	
+						int radius = 0;
+						for (char c :line.toCharArray()){
+							if(c == ',' || c == '\0'){
 								psikCntr++;
 								switch (psikCntr){
 								case 1:	//x0 point
@@ -129,40 +169,99 @@ public class main {
 									numBuff_y = Integer.parseInt(buff_string.toString());
 									pointsBuff.add(new Point(numBuff_x, numBuff_y));
 									break;
+								case 3:	//Radius
+									radius = Integer.parseInt(buff_string.toString());
+									break;
+								case 4:	//Color
+									try {
+									    Field field = Class.forName("java.awt.Color").getField(buff_string.toString());
+									    color = (Color)field.get(null);
+									} catch (Exception e) {
+									    color = null; // Not defined
+									}
+									break;
+								}
+								buff_string=new StringBuilder();	//init
+							}else{
+								buff_string.append(c);	//build the number
+							}
+						}
+						ob = new Circle(color, pointsBuff, radius);	//create instance
+						shapeList.add(ob);					//add to list
+						psikCntr=0;							//init
+						break;
+					//Poligon
+					case 3:
+						int vertex = 0;
+						for (char c :line.toCharArray()){
+							if(c == ',' || c == '\0'){
+								psikCntr++;
+								switch (psikCntr){
+								case 1:	//x0 point
 								case 3:	//x1 point
 									numBuff_x = Integer.parseInt(buff_string.toString());
 									break;
+								case 2:	//y0 point
 								case 4:	//y1 point
 									numBuff_y = Integer.parseInt(buff_string.toString());
 									pointsBuff.add(new Point(numBuff_x, numBuff_y));
 									break;
-								case 5:	//color string
-									color = Color.getColor(buff_string.toString());
+								case 5:	//color
+									vertex = Integer.parseInt(buff_string.toString());
+									break;
+								case 6:	//color
+									try {
+									    Field field = Class.forName("java.awt.Color").getField(buff_string.toString());
+									    color = (Color)field.get(null);
+									} catch (Exception e) {
+									    color = null; // Not defined
+									}
 									break;
 								}
-								buff_string=null;	//init
+								buff_string=new StringBuilder();	//init
 							}else{
 								buff_string.append(c);	//build the number
 							}
-							ob = new Line(color, pointsBuff);	//create instance
-							shapeList.add(ob);					//add to list
-							psikCntr=0;							//init
 						}
+						ob = new Poligon(color, pointsBuff, vertex);	//create instance
+						shapeList.add(ob);					//add to list
+						psikCntr=0;							//init
 						break;
-					case 2:
-						for (char c :line.toCharArray()){
-							
-						}
-						break;
-					case 3:
-						for (char c :line.toCharArray()){
-							
-						}
-						break;
+					//Bezier
 					case 4:
 						for (char c :line.toCharArray()){
-							
+							if(c == ',' || c == '\0'){
+								psikCntr++;
+								switch (psikCntr){
+								case 1:	//A.x point
+								case 3:	//B.x point
+								case 5:	//C.x point
+								case 7:	//D.x point
+									numBuff_x = Integer.parseInt(buff_string.toString());
+								case 2:	//A.y point
+								case 4:	//B.y point
+								case 6:	//C.y point
+								case 8:	//D.y point
+									numBuff_y = Integer.parseInt(buff_string.toString());
+									pointsBuff.add(new Point(numBuff_x, numBuff_y));
+									break;
+								case 9:	//color
+									try {
+									    Field field = Class.forName("java.awt.Color").getField(buff_string.toString());
+									    color = (Color)field.get(null);
+									} catch (Exception e) {
+									    color = null; // Not defined
+									}
+									break;
+								}
+								buff_string=new StringBuilder();	//init
+							}else{
+								buff_string.append(c);	//build the number
+							}
 						}
+						ob = new Bezier(color, pointsBuff);	//create instance
+						shapeList.add(ob);					//add to list
+						psikCntr=0;	
 						break;
 						
 						

@@ -45,4 +45,11 @@ public class Poligon extends Shape {
 	public void setC(Color c) {
 		this.c = c;
 	}	
+	
+	
+	/* Draw*/
+	@Override
+	public void draw(){
+		main.pane.regularPolygon(c, polygonPoints, poligon_vertex);
+	}
 }

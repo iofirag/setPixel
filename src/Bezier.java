@@ -1,29 +1,31 @@
 import java.awt.Color;
+import java.awt.Point;
+import java.util.List;
 
 
 public class Bezier extends Shape {
 	Color c=Color.BLACK;
-	int bezierPoints;
+	List<Point> bezierPoints;
 	
 	/* Ctor. */
 	public Bezier() {
 		super();
 	}
-	public Bezier(int bezierPoints) {
+	public Bezier(List<Point> bezierPoints) {
 		super();
 		this.bezierPoints = bezierPoints;
 	}
-	public Bezier(Color c, int bezierPoints) {
+	public Bezier(Color c, List<Point> bezierPoints) {
 		super();
 		this.c = c;
 		this.bezierPoints = bezierPoints;
 	}
 
 	/* Getters & Setters */
-	public int getBezierPoints() {
+	public List<Point> getBezierPoints() {
 		return bezierPoints;
 	}
-	public void setBezierPoints(int bezierPoints) {
+	public void setBezierPoints(List<Point> bezierPoints) {
 		this.bezierPoints = bezierPoints;
 	}
 	public Color getC() {
@@ -33,4 +35,11 @@ public class Bezier extends Shape {
 		this.c = c;
 	}
 
+	
+	
+	/* Draw*/
+	@Override
+	public void draw(){
+		main.pane.drawBezierCurve(c, bezierPoints);
+	}
 }
