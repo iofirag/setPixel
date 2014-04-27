@@ -307,9 +307,6 @@ public class myJPanel extends JPanel {
 	public void putSuperPixel(int x, int y, Color c) {
 		int color = c.getRGB();
 		try {
-			// fixing point accuracy
-//			x -= 8;
-//			y -= 53;
 			canvas.setRGB(x, y, color);
 			canvas.setRGB(x, y - 1, color);
 			canvas.setRGB(x, y - 2, color);

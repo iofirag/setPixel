@@ -159,7 +159,7 @@ public class main {
 					case 2:	
 						int radius = 0;
 						for (char c :line.toCharArray()){
-							if(c == ',' || c == '\0'){
+							if(c == ',' || c == '.'){
 								psikCntr++;
 								switch (psikCntr){
 								case 1:	//x0 point
@@ -194,7 +194,7 @@ public class main {
 					case 3:
 						int vertex = 0;
 						for (char c :line.toCharArray()){
-							if(c == ',' || c == '\0'){
+							if(c == ',' || c == '.'){
 								psikCntr++;
 								switch (psikCntr){
 								case 1:	//x0 point
@@ -230,7 +230,7 @@ public class main {
 					//Bezier
 					case 4:
 						for (char c :line.toCharArray()){
-							if(c == ',' || c == '\0'){
+							if(c == ',' || c == '.'){
 								psikCntr++;
 								switch (psikCntr){
 								case 1:	//A.x point
