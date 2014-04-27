@@ -110,7 +110,7 @@ public class myJPanel extends JPanel {
 	static public int calculateRadius(int x0, int y0, int x1, int y1) {
 		// Length from start to end
 		int counter = 0;
-		// /* ablolute length end-start */
+		// /* absolute length end-start */
 		/**************************** BEGINING OF BREZENHAM'S LINE ALGORITHM *****************/
 		int dy = y1 - y0;
 		int dx = x1 - x0;

@@ -39,9 +39,6 @@ public class main {
 	static List <String>lines = null;
 	
 	static int numOfPoints=0;
-	static List<Point> linePoints=new ArrayList<>();
-	static List<Point> circlePoints=new ArrayList<>();
-	static List<Point> polygonPoints=new ArrayList<>();
 	static List<Point> bezierPoints=new ArrayList<>();
 	
 	static myJPanel pane;
@@ -100,9 +97,7 @@ public class main {
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				
 			}
-
 			private void parseLines_ToObjects(List<String> lines) {
 				//run on every line in file
 				for (String line : lines){
@@ -274,15 +269,8 @@ public class main {
 		});
         fileMenu.add(openFile);
         
-        // Clear Screen button
-        JMenuItem menu_clearScreen = new JMenuItem("Clear Screen");
-        menu_clearScreen.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				pane.fillCanvas(Color.white);
-			}
-		});
-
+//************************************************
+     
         // Objects Menu
         JMenu objectsMenu = new JMenu ("Objects");
         objectsMenu.setMnemonic(KeyEvent.VK_O);
@@ -314,7 +302,6 @@ public class main {
 				poligon_vertex= Integer.parseInt(result);
 			}
 		});
-
         JMenuItem objectItem_bezier = new JMenuItem("Bezier Curve");
         objectItem_bezier.addActionListener(new ActionListener() {
 			@Override
@@ -326,7 +313,8 @@ public class main {
         objectsMenu.add(objectItem_circle);
         objectsMenu.add(objectItem_poligon);
         objectsMenu.add(objectItem_bezier);
-      //************************************************
+        
+//************************************************
         
         // Color Menu
         JMenu colorMenu = new JMenu("Color");
@@ -384,23 +372,110 @@ public class main {
 				color = Color.RED;
 			}
 		});
-        //Build the first menu.
+        //Build Color menu.
         colorMenu.add(colorMenu_black);
         colorMenu.add(colorMenu_red);
         colorMenu.add(colorMenu_green);
         colorMenu.add(colorMenu_blue);
         colorMenu.add(colorMenu_white);
         colorMenu.add(colorMenu_yellow);
-        //*********************************************
+        
+//************************************************
+        
+        // Transforms
+        JMenu transformsMenu = new JMenu ("Transforms");
+        JMenuItem transShifting = new JMenuItem("Shifting");	//הזזה
+        transShifting.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+        JMenuItem transScale = new JMenuItem("Scale");			//סילום
+        //transMove.setMnemonic(KeyEvent.VK_F1);
+        transScale.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+        JMenuItem transRotating = new JMenuItem("Rotating");	//סיבוב
+        //transMove.setMnemonic(KeyEvent.VK_F1);
+        transRotating.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+        JMenuItem transMirroring = new JMenuItem("Mirroring");	//שיקוף
+        //transMove.setMnemonic(KeyEvent.VK_F1);
+        transMirroring.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+        JMenuItem transCut = new JMenuItem("Cut");				//גזירה
+        //transMove.setMnemonic(KeyEvent.VK_F1);
+        transCut.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+        transformsMenu.add(transShifting);
+        transformsMenu.add(transScale);
+        transformsMenu.add(transRotating);
+        transformsMenu.add(transMirroring);
+        transformsMenu.add(transCut);
+        
+        
+//************************************************
+        
+        // Clear Screen button
+        JMenuItem clearScreen_menu = new JMenuItem("Clear Screen");
+        clearScreen_menu.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				pane.fillCanvas(Color.white);
+				System.out.println( shapeList.toString() );
+				shapeList.clear();
+			}
+		});
+
+//************************************************
+        
+        // Help
+        JMenu helpMenu = new JMenu ("Help");
+        JMenuItem instructions = new JMenuItem("Instructions");
+        instructions.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//
+			}
+		});
+        JMenuItem about = new JMenuItem("About");
+        about.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//
+			}
+		});
+        helpMenu.add(instructions);
+        helpMenu.add(about);
+        
+//*********************************************
         
         menuBar.add(fileMenu);
         menuBar.add(objectsMenu);
         menuBar.add(colorMenu);
-        menuBar.add(menu_clearScreen);
+        menuBar.add(transformsMenu);
+        menuBar.add(clearScreen_menu);
+        menuBar.add(helpMenu);
 
         pane.setLayout(new BorderLayout());
         frame.add(menuBar, BorderLayout.NORTH);
-        /**End menu's*******************************************************/
+/**End menu's*******************************************************/
         
         // visibility 
         frame.setVisible(true);
@@ -419,37 +494,43 @@ public class main {
 				switch (shape){
 				// Draw a line
 				case 1: 
-					 
+					List<Point> linePoints=new ArrayList<>();
+					linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
 					
 					if (width- pointRelease.getX() >=0 && height- pointRelease.getY() >=0 ){
-						linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
   						linePoints.add(new Point((int)pointRelease.getX(),(int)pointRelease.getY()));	//end
-  						pane.drawLine(color, linePoints);
-  						linePoints.clear();
+  						Line line = new Line(color, linePoints);  
+  						line.draw();
+  						shapeList.add(line);	//history
 					}
   					else{ 
-  						linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
   						linePoints.add(new Point((int)lastDrag_x,(int)lastDrag_y));	//end	
-  						pane.drawLine(color, linePoints);
-  						linePoints.clear();
+  						Line line = new Line(color, linePoints);  
+  						line.draw();
+  						shapeList.add(line);	//history
   					}
   					break;
 				//Draw a circle
 				case 2:
+					List<Point> circlePoints=new ArrayList<>();
 					//calculate radius
 					circlePoints.add(new Point(pointPressed.x, pointPressed.y));
-					int radius = pane.calculateRadius(pointPressed.x, pointPressed.y, pointRelease.x, pointRelease.y);
 					
-					pane.drawCircle(color, circlePoints, radius);
-					circlePoints.clear();
+					int radius = pane.calculateRadius(pointPressed.x, pointPressed.y, pointRelease.x, pointRelease.y);
+					Circle circle = new Circle(color, circlePoints, radius);  
+					circle.draw();
+					shapeList.add(circle);	//history
 					break;
 				//Draw a polygon
 				case 3:
+					List<Point> polygonPoints=new ArrayList<>();
+					
 					polygonPoints.add(new Point(pointPressed.x,pointPressed.y));
 					polygonPoints.add(new Point(pointRelease.x,pointRelease.y));
 					
-					pane.regularPolygon(color ,polygonPoints, poligon_vertex);
-					polygonPoints.clear();
+					Poligon poligon = new Poligon(color, polygonPoints, poligon_vertex);  
+					poligon.draw();
+					shapeList.add(poligon);	//history
 					break;
 				}
 			}
@@ -479,19 +560,20 @@ public class main {
 					numOfPoints++;									//counter
 					bezierPoints.add(new Point(e.getX()-8,e.getY()-53));	//save point to list + Fix
 					if (numOfPoints==4) {
-						pane.drawBezierCurve(color,bezierPoints);	//draw
-						bezierPoints=new ArrayList<>();	//init	why not use .clear() ??
+						Bezier bezier = new Bezier(color, bezierPoints);  
+						bezier.draw();
+  						shapeList.add(bezier);	//history
+						
+						bezierPoints.clear();			//init
 						numOfPoints=0;					//init
 					}
 				}
-
 				System.out.println("clicked");
 			}
 		});
         
         // mouse motion 
         frame.addMouseMotionListener(new MouseMotionListener() {
-
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				System.out.println("moved");
@@ -508,16 +590,13 @@ public class main {
         
     }
 
-	public static String promptForFile( Component parent )
-	{
+	public static String promptForFile( Component parent ){
 	    JFileChooser fc = new JFileChooser();
 	    fc.setFileSelectionMode( JFileChooser.FILES_ONLY );
-	
 	    if( fc.showOpenDialog( parent ) == JFileChooser.APPROVE_OPTION )
 	    {
 	        return fc.getSelectedFile().getAbsolutePath();
 	    }
-	
 	    return null;
 	}
 }
