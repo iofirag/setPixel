@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JFileChooser;
@@ -30,36 +31,42 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 public class main {
-//	static List<Line> lines_L;
-//	static List<Circle> circle_L;
-//	static List<Poligon> poligon_L;
-//	static List<Bezier> bezier_L;
+	// Window size
+	static final int WIDTH = 900;	//x
+    static final int HEIGHT = 500;	//y
+    
+    
+    //panel
+    static myJPanel pane;
+   
+    //History object draw
 	static List<Shape> shapeList=new ArrayList<>();
 	
-	static List <String>lines = null;
-	
-	static int numOfPoints=0;
-	static List<Point> bezierPoints=new ArrayList<>();
-	
-	static myJPanel pane;
-	static int poligon_vertex =0;
+	// Mouse variables
 	static Point pointPressed =null;
 	static Point pointRelease =null;
 	static int lastDrag_x=0;
 	static int lastDrag_y=0;
 	static boolean MouseExitFromWindow=false;
-	static int shape = 1;		// 1=Line   2=Circle   3=Polygon 4=Bezier curve
+	
+	// Shape & color user choose
+	static int shape = 1;		// 1=Line(default)   2=Circle   3=Polygon	4=Bezier curve
 	static Color color = Color.black;
-
+	
+	//bezier variables
+	static int numOfPoints=0;
+	static List<Point> bezierPoints=new ArrayList<>();
+		
+	//poligon variable
+	static int poligon_vertex =0;
+	
 	public static void main(String[] args) {
-        final int width = 900;
-        final int height = 500;
 
         /* java window - the container managed the frame */
         JFrame frame = new JFrame("Direct draw demo");       
         
         /* specific frame */
-        pane = new myJPanel(width, height);
+        pane = new myJPanel(WIDTH, HEIGHT);
         
         //******************************************************************
 
@@ -87,6 +94,7 @@ public class main {
 				Path path = Paths.get(pathString);
 
 				try {
+					List <String>lines = null;
 					//parse can open .TXT format that saved in type UTF-8
 					lines = Files.readAllLines(path, StandardCharsets.US_ASCII);
 					parseLines_ToObjects(lines);	//save all objects in shapeList
@@ -384,11 +392,25 @@ public class main {
         
         // Transforms
         JMenu transformsMenu = new JMenu ("Transforms");
-        JMenuItem transShifting = new JMenuItem("Shifting");	//הזזה
+        JMenuItem transShifting = new JMenuItem("Shift");	//הזזה
         transShifting.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				//custom title, custom icon
+				String result = JOptionPane.showInputDialog("How many px sifting in X:");
+				int shiftX= Integer.parseInt(result);
+				result = JOptionPane.showInputDialog("How many px sifting in Y:");
+				int shiftY= Integer.parseInt(result);
+				pane.fillCanvas(Color.white);
+				for (Shape s :shapeList){
+					for (int i=0; i<s.getPoints().size(); i++){
+						s.getPoints().get(i).x+=shiftX;
+						s.getPoints().get(i).y+=shiftY;
+					}
+					s.draw();
+				}
+				shiftX=0;	//init
+				shiftY=0;	//init
 			}
 		});
         JMenuItem transScale = new JMenuItem("Scale");			//סילום
@@ -483,10 +505,9 @@ public class main {
         // Mouse Listeners 
         frame.addMouseListener(new MouseListener() {
 			@Override
-			public void mouseReleased(MouseEvent e1) {
-				// TODO Auto-generated method stub
-				System.out.println("release"+e1.getPoint());
-				pointRelease= new Point( e1.getPoint() );
+			public void mouseReleased(MouseEvent e) {
+				System.out.println("Released	(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
+				pointRelease= new Point( e.getPoint() );
 				// Fix point
 				pointRelease.x-=8;
 				pointRelease.y-=53;
@@ -497,7 +518,7 @@ public class main {
 					List<Point> linePoints=new ArrayList<>();
 					linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
 					
-					if (width- pointRelease.getX() >=0 && height- pointRelease.getY() >=0 ){
+					if (WIDTH- pointRelease.getX() >=0 && HEIGHT- pointRelease.getY() >=0 ){
   						linePoints.add(new Point((int)pointRelease.getX(),(int)pointRelease.getY()));	//end
   						Line line = new Line(color, linePoints);  
   						line.draw();
@@ -513,18 +534,16 @@ public class main {
 				//Draw a circle
 				case 2:
 					List<Point> circlePoints=new ArrayList<>();
-					//calculate radius
+					circlePoints.add(new Point(pointRelease.x, pointRelease.y));
 					circlePoints.add(new Point(pointPressed.x, pointPressed.y));
 					
-					int radius = pane.calculateRadius(pointPressed.x, pointPressed.y, pointRelease.x, pointRelease.y);
-					Circle circle = new Circle(color, circlePoints, radius);  
+					Circle circle = new Circle(color, circlePoints);  
 					circle.draw();
 					shapeList.add(circle);	//history
 					break;
 				//Draw a polygon
 				case 3:
-					List<Point> polygonPoints=new ArrayList<>();
-					
+					List<Point> polygonPoints=new ArrayList<>();					
 					polygonPoints.add(new Point(pointPressed.x,pointPressed.y));
 					polygonPoints.add(new Point(pointRelease.x,pointRelease.y));
 					
@@ -537,7 +556,7 @@ public class main {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				System.out.println("pressed"+e.getPoint());
+				System.out.println("Pressed		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				pointPressed= new Point(e.getPoint() );
 				// Fix point
 				pointPressed.x-=8;
@@ -545,16 +564,17 @@ public class main {
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
-				System.out.println("exited");
-				MouseExitFromWindow=true;
+				System.out.println("Exited		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
+				//MouseExitFromWindow=true;
 			}
 			@Override
-			public void mouseEntered(MouseEvent e) {				
-				System.out.println("entered");
-
+			public void mouseEntered(MouseEvent e) {
+				System.out.println("Entered		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
+				//MouseExitFromWindow=false;
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				System.out.println("Clicked		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				if ((shape==4) && (numOfPoints<4)){ //shape 4 = bezier curve
 					pane.putSuperPixel(e.getX()-8,e.getY()-53,color);	//put big pixel + Fix
 					numOfPoints++;									//counter
@@ -568,7 +588,6 @@ public class main {
 						numOfPoints=0;					//init
 					}
 				}
-				System.out.println("clicked");
 			}
 		});
         
@@ -576,13 +595,12 @@ public class main {
         frame.addMouseMotionListener(new MouseMotionListener() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				System.out.println("moved");
-				System.out.println( "("+e.getPoint().getX()+" , "+e.getPoint().getY()+")");
+				System.out.println("Moved		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 			}
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				System.out.println("dragged");
+				System.out.println("Dragged		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				lastDrag_x= (int) e.getPoint().getX()-8;		//Fix
 				lastDrag_y= (int) e.getPoint().getY()-53;		//Fix
 			}

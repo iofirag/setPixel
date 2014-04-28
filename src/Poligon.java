@@ -27,10 +27,12 @@ public class Poligon extends Shape {
 	}
 	
 	/* Getters & Setters */
-	public List<Point> getPolygonPoints() {
+	@Override
+	public List<Point> getPoints() {
 		return polygonPoints;
 	}
-	public void setPolygonPoints(List<Point> polygonPoints) {
+	@Override
+	public void setPoints(List<Point> polygonPoints) {
 		this.polygonPoints = polygonPoints;
 	}
 	public int getPoligon_vertex() {

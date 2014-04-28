@@ -22,10 +22,12 @@ public class Bezier extends Shape {
 	}
 
 	/* Getters & Setters */
-	public List<Point> getBezierPoints() {
+	@Override
+	public List<Point> getPoints() {
 		return bezierPoints;
 	}
-	public void setBezierPoints(List<Point> bezierPoints) {
+	@Override
+	public void setPoints(List<Point> bezierPoints) {
 		this.bezierPoints = bezierPoints;
 	}
 	public Color getC() {

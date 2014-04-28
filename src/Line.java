@@ -28,10 +28,12 @@ public class Line extends Shape {
 	public void setC(Color c) {
 		this.c = c;
 	}
-	public List<Point> getLinePoints() {
+	@Override
+	public List<Point> getPoints() {
 		return linePoints;
 	}
-	public void setLinePoints(List<Point> linePoints) {
+	@Override
+	public void setPoints(List<Point> linePoints) {
 		this.linePoints = linePoints;
 	}
 	

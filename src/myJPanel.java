@@ -18,9 +18,15 @@ import Jama.Matrix;
 public class myJPanel extends JPanel {
 	private BufferedImage canvas;
 
+	// Max values can draw on canvas
+    int MAX_DRAW_X = 0;
+    int MAX_DRAW_Y = 0;
+
 	public myJPanel(int width, int height) {
 		canvas = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		// using auto the function getPreferredSize()
+		MAX_DRAW_X = canvas.getWidth()-1;		//fix
+	    MAX_DRAW_Y = canvas.getHeight()-24;		//fix
 	}
 
 	// *******override***********************************************
@@ -39,8 +45,8 @@ public class myJPanel extends JPanel {
 	// ********************************************************
 
 	public void fillCanvas(Color c) {
-		for (int x = 0; x < canvas.getWidth(); x++) {
-			for (int y = 0; y < canvas.getHeight(); y++) {
+		for (int x = 0; x < MAX_DRAW_X; x++) {
+			for (int y = 0; y < MAX_DRAW_Y; y++) {
 				putPixel(x, y, c);
 			}
 		}
@@ -49,10 +55,11 @@ public class myJPanel extends JPanel {
 
 	public void drawLine(Color c, List<Point> points) {
 		System.out.println("drawLine");
-		int x0=(int)points.get(0).getX();
-		int y0=(int)points.get(0).getY();
-		int x1=(int)points.get(1).getX();
-		int y1=(int)points.get(1).getY();
+		int x0 = (int) points.get(0).getX();
+		int y0 = (int) points.get(0).getY();
+		int x1 = (int) points.get(1).getX();
+		int y1 = (int) points.get(1).getY();
+
 		/**************************** BEGINING OF BREZENHAM'S LINE ALGORITHM *****************/
 		// Implement line drawing
 		// ablolute length end-start
@@ -107,7 +114,12 @@ public class myJPanel extends JPanel {
 		repaint();
 	}
 
-	static public int calculateRadius(int x0, int y0, int x1, int y1) {
+	static public int calculateRadius(List<Point> points) {
+		int x0 = (int) points.get(0).getX();
+		int y0 = (int) points.get(0).getY();
+		int x1 = (int) points.get(1).getX();
+		int y1 = (int) points.get(1).getY();
+		
 		// Length from start to end
 		int counter = 0;
 		// /* absolute length end-start */
@@ -157,7 +169,6 @@ public class myJPanel extends JPanel {
 		return counter;
 	}
 
-
 	// Implementation of circle drawing algorithm
 	public void drawCircle(Color c, List<Point> points, int radius) {
 		int x = radius;
@@ -165,14 +176,22 @@ public class myJPanel extends JPanel {
 		int radiusError = 1 - x;
 
 		while (x >= y) {
-			putPixel(x + (int)points.get(0).getX(), y + (int)points.get(0).getY(), c);
-			putPixel(y + (int)points.get(0).getX(), x + (int)points.get(0).getY(), c);
-			putPixel(-x + (int)points.get(0).getX(), y + (int)points.get(0).getY(), c);
-			putPixel(-y + (int)points.get(0).getX(), x + (int)points.get(0).getY(), c);
-			putPixel(-x + (int)points.get(0).getX(), -y + (int)points.get(0).getY(), c);
-			putPixel(-y + (int)points.get(0).getX(), -x + (int)points.get(0).getY(), c);
-			putPixel(x + (int)points.get(0).getX(), -y + (int)points.get(0).getY(), c);
-			putPixel(y + (int)points.get(0).getX(), -x + (int)points.get(0).getY(), c);
+			putPixel(x + (int) points.get(0).getX(), y
+					+ (int) points.get(0).getY(), c);
+			putPixel(y + (int) points.get(0).getX(), x
+					+ (int) points.get(0).getY(), c);
+			putPixel(-x + (int) points.get(0).getX(), y
+					+ (int) points.get(0).getY(), c);
+			putPixel(-y + (int) points.get(0).getX(), x
+					+ (int) points.get(0).getY(), c);
+			putPixel(-x + (int) points.get(0).getX(), -y
+					+ (int) points.get(0).getY(), c);
+			putPixel(-y + (int) points.get(0).getX(), -x
+					+ (int) points.get(0).getY(), c);
+			putPixel(x + (int) points.get(0).getX(), -y
+					+ (int) points.get(0).getY(), c);
+			putPixel(y + (int) points.get(0).getX(), -x
+					+ (int) points.get(0).getY(), c);
 			y++;
 			if (radiusError < 0) {
 				radiusError += 2 * y + 1;
@@ -185,7 +204,8 @@ public class myJPanel extends JPanel {
 	}
 
 	// Polygon drawing
-	public void regularPolygon(Color c, List<Point> polygonPoints,int pointsNumber) {
+	public void regularPolygon(Color c, List<Point> polygonPoints,
+			int pointsNumber) {
 		Point p[] = new Point[pointsNumber];
 		int disatance = (int) Math
 				.sqrt((polygonPoints.get(0).getX() - polygonPoints.get(1)
@@ -209,8 +229,9 @@ public class myJPanel extends JPanel {
 		Point pointToClose = new Point(((int) (p[0].getX())),
 				(int) (p[0].getY()));
 		for (int i = 0; i < pointsNumber; i++) {
-			polygonPoints.add(new Point((int) (p[i].getX()),(int) (p[i].getY())));
-			
+			polygonPoints.add(new Point((int) (p[i].getX()),
+					(int) (p[i].getY())));
+
 			drawLine(c, polygonPoints);
 			polygonPoints.remove(0);
 		}
@@ -255,10 +276,10 @@ public class myJPanel extends JPanel {
 			pointY = (int) ((resultsForY.get(0, 0) * Math.pow(t, 3))
 					+ (resultsForY.get(1, 0) * Math.pow(t, 2))
 					+ (resultsForY.get(2, 0) * t) + (resultsForY.get(3, 0)));
-			
-			List<Point> temp=new ArrayList<>();
-			temp.add(new Point(prevX,prevY));
-			temp.add(new Point(pointX,pointY));
+
+			List<Point> temp = new ArrayList<>();
+			temp.add(new Point(prevX, prevY));
+			temp.add(new Point(pointX, pointY));
 			drawLine(color, temp);
 			t += 0.001;
 			// Setting current point to be the previous point. we will draw the
@@ -296,10 +317,17 @@ public class myJPanel extends JPanel {
 
 	public void putPixel(int x, int y, Color c) {
 		int color = c.getRGB();
-		try {
+		if (x<0  ||  x>MAX_DRAW_X  ||  y<0   ||  y>MAX_DRAW_Y){
+			if (x<0) 				x=0;
+			if (x>MAX_DRAW_X)		x=MAX_DRAW_X;
+			if (y<0)				y=0;
+			if (y>MAX_DRAW_Y)	y=MAX_DRAW_Y;
+			System.out.println("Coordinate out of bounds, Auto fix.");
+		}
+		try{
 			canvas.setRGB(x, y, color);
-		} catch (Exception e) {
-			System.out.println("Coordinate out of bounds!");
+		}catch (Exception e) {
+			System.out.println("Error! "+x+" "+y);
 		}
 	}
 
