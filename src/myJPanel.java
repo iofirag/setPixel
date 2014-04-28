@@ -27,6 +27,7 @@ public class myJPanel extends JPanel {
 		// using auto the function getPreferredSize() so we don't call it
 		MAX_DRAW_X = canvas.getWidth()-1;		//fix
 	    MAX_DRAW_Y = canvas.getHeight()-24;		//fix
+	    fillCanvas(Color.white);
 	}
 
 	// *******override***********************************************
@@ -40,14 +41,13 @@ public class myJPanel extends JPanel {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(canvas, null, null);
-		fillCanvas(Color.white);
 	}
 
 	// ********************************************************
 
 	public void fillCanvas(Color c) {
 		for (int x = 0; x < MAX_DRAW_X+1; x++) {
-			for (int y = 0; y < MAX_DRAW_Y; y++) {
+			for (int y = 0; y < MAX_DRAW_Y+1; y++) {
 				putPixel(x, y, c);
 			}
 		}
