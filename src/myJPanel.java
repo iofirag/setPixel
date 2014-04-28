@@ -24,7 +24,7 @@ public class myJPanel extends JPanel {
 
 	public myJPanel(int width, int height) {
 		canvas = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		// using auto the function getPreferredSize()
+		// using auto the function getPreferredSize() so we don't call it
 		MAX_DRAW_X = canvas.getWidth()-1;		//fix
 	    MAX_DRAW_Y = canvas.getHeight()-24;		//fix
 	}
@@ -40,12 +40,13 @@ public class myJPanel extends JPanel {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(canvas, null, null);
+		fillCanvas(Color.white);
 	}
 
 	// ********************************************************
 
 	public void fillCanvas(Color c) {
-		for (int x = 0; x < MAX_DRAW_X; x++) {
+		for (int x = 0; x < MAX_DRAW_X+1; x++) {
 			for (int y = 0; y < MAX_DRAW_Y; y++) {
 				putPixel(x, y, c);
 			}
@@ -206,6 +207,7 @@ public class myJPanel extends JPanel {
 	// Polygon drawing
 	public void regularPolygon(Color c, List<Point> polygonPoints,
 			int pointsNumber) {
+		
 		Point p[] = new Point[pointsNumber];
 		int disatance = (int) Math
 				.sqrt((polygonPoints.get(0).getX() - polygonPoints.get(1)
@@ -224,20 +226,21 @@ public class myJPanel extends JPanel {
 					(int) (polygonPoints.get(0).getY() + disatance
 							* Math.sin(i * 2 * Math.PI / pointsNumber)));
 		}
-		polygonPoints.clear();
-		polygonPoints.add(new Point((int) (p[0].getX()), (int) (p[0].getY())));
+		//polygonPoints.clear();
+		List<Point> temp = new ArrayList<Point>(); 
+		temp.add(new Point((int) (p[0].getX()), (int) (p[0].getY())));
 		Point pointToClose = new Point(((int) (p[0].getX())),
 				(int) (p[0].getY()));
 		for (int i = 0; i < pointsNumber; i++) {
-			polygonPoints.add(new Point((int) (p[i].getX()),
+			temp.add(new Point((int) (p[i].getX()),
 					(int) (p[i].getY())));
 
-			drawLine(c, polygonPoints);
-			polygonPoints.remove(0);
+			drawLine(c, temp);
+			temp.remove(0);
 		}
 		// Drawing the last line to a point the started the shape.
-		polygonPoints.add(pointToClose);
-		drawLine(c, polygonPoints);
+		temp.add(pointToClose);
+		drawLine(c, temp);
 	}
 
 	// This function recieves 4 points from the user using mouse listeners and
@@ -340,6 +343,7 @@ public class myJPanel extends JPanel {
 			canvas.setRGB(x, y - 2, color);
 			canvas.setRGB(x - 1, y - 1, color);
 			canvas.setRGB(x + 1, y - 1, color);
+			repaint();
 		} catch (Exception e) {
 			System.out.println("Coordinate out of bounds!");
 		}

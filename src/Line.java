@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Line extends Shape {
 	Color c=Color.BLACK;
-	List<Point> linePoints;
+	List<Point> points;
 	
 	/* Ctor. */
 	public Line() {
@@ -13,11 +13,11 @@ public class Line extends Shape {
 	public Line(Color c, List<Point> linePoints) {
 		super();
 		this.c = c;
-		this.linePoints = linePoints;
+		this.points = linePoints;
 	}
 	public Line(List<Point> linePoints) {
 		super();
-		this.linePoints = linePoints;
+		this.points = linePoints;
 	}
 	
 	
@@ -30,18 +30,30 @@ public class Line extends Shape {
 	}
 	@Override
 	public List<Point> getPoints() {
-		return linePoints;
+		return points;
 	}
 	@Override
 	public void setPoints(List<Point> linePoints) {
-		this.linePoints = linePoints;
+		this.points = linePoints;
 	}
 	
 	
 	/* Draw*/
 	@Override
 	public void draw(){
-		main.pane.drawLine(c, linePoints);
+		main.pane.drawLine(c, points);
 	}
 
+	@Override
+	public String toString(){
+		//NamedColor nc;
+		//nc.compareTo();
+		
+		return "1,"
+			+points.get(0).x + ","	//x0
+			+points.get(0).y + ","	//y0
+			+points.get(1).x + ","	//x1
+			+points.get(1).y + ","	//y1
+			+"black.";				//color
+	}
 }

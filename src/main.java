@@ -13,6 +13,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +32,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+
 
 public class main {
 	// Window size
@@ -52,16 +56,19 @@ public class main {
 	// Shape & color user choose
 	static int shape = 1;		// 1=Line(default)   2=Circle   3=Polygon	4=Bezier curve
 	static Color color = Color.black;
-	
+		  
 	//bezier variables
-	static int numOfPoints=0;
+	
 	static List<Point> bezierPoints=new ArrayList<>();
+	//static int numOfPoints=0;
 		
 	//poligon variable
 	static int poligon_vertex =0;
 	
 	public static void main(String[] args) {
-
+		//see all the properties in java
+		System.getProperties().list(System.out);
+		
         /* java window - the container managed the frame */
         JFrame frame = new JFrame("Direct draw demo");       
         
@@ -275,7 +282,45 @@ public class main {
 				}
 			}
 		});
+        JMenuItem saveFile = new JMenuItem("Save file");
+        saveFile.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent ev) {
+				File file;
+				FileWriter fw;
+				BufferedWriter bw = null;
+				try {
+					// Open the file
+					file = new File(System.getProperty("user.dir")+"/"+System.currentTimeMillis()+".txt");
+					// if file doesnt exists, then create it
+					if (!file.exists()) {
+						file.createNewFile();
+					}
+					
+					//open streaming
+					fw = new FileWriter(file.getAbsoluteFile());
+					bw = new BufferedWriter(fw);
+					
+					for (Shape s :shapeList){
+						bw.write(s.toString()+'\n');
+					}
+					bw.close();
+					System.out.println("Done");
+		 
+				} catch (IOException e) {
+					e.printStackTrace();
+					try {
+						bw.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
         fileMenu.add(openFile);
+        fileMenu.add(saveFile);
         
 //************************************************
      
@@ -402,6 +447,7 @@ public class main {
 				result = JOptionPane.showInputDialog("How many px sifting in Y:");
 				int shiftY= Integer.parseInt(result);
 				pane.fillCanvas(Color.white);
+				
 				for (Shape s :shapeList){
 					for (int i=0; i<s.getPoints().size(); i++){
 						s.getPoints().get(i).x+=shiftX;
@@ -507,10 +553,7 @@ public class main {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				System.out.println("Released	(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
-				pointRelease= new Point( e.getPoint() );
-				// Fix point
-				pointRelease.x-=8;
-				pointRelease.y-=53;
+				pointRelease= new Point(e.getPoint().x-8, e.getPoint().y-53 );
 
 				switch (shape){
 				// Draw a line
@@ -557,10 +600,8 @@ public class main {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				System.out.println("Pressed		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
-				pointPressed= new Point(e.getPoint() );
-				// Fix point
-				pointPressed.x-=8;
-				pointPressed.y-=53;
+				pointPressed= new Point(e.getPoint().x-8, e.getPoint().y-53 );
+				
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {
@@ -575,19 +616,22 @@ public class main {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				System.out.println("Clicked		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
-				if ((shape==4) && (numOfPoints<4)){ //shape 4 = bezier curve
+				
+				if ((shape==4) && (bezierPoints.size()<=4)){ //shape 4 = bezier curve
 					pane.putSuperPixel(e.getX()-8,e.getY()-53,color);	//put big pixel + Fix
-					numOfPoints++;									//counter
 					bezierPoints.add(new Point(e.getX()-8,e.getY()-53));	//save point to list + Fix
-					if (numOfPoints==4) {
+					
+					if(bezierPoints.size()==4 ) {
 						Bezier bezier = new Bezier(color, bezierPoints);  
 						bezier.draw();
-  						shapeList.add(bezier);	//history
+						shapeList.add(bezier);	//history
+
+						//System.out.println(shapeList.get(0) );
+						bezierPoints.clear();	//init
 						
-						bezierPoints.clear();			//init
-						numOfPoints=0;					//init
 					}
-				}
+				}	
+				
 			}
 		});
         

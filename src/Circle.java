@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Circle extends Shape {
 	Color c = Color.BLACK;
-	List<Point> circlePoint;
+	List<Point> points;
 	int radius;
 
 	/* Ctor. */
@@ -15,13 +15,13 @@ public class Circle extends Shape {
 	public Circle(Color c, List<Point> circlePoint, int radius) {
 		super();
 		this.c = c;
-		this.circlePoint = circlePoint;
+		this.points = circlePoint;
 		this.radius = radius;
 	}
 
 	public Circle(List<Point> circlePoint, int radius) {
 		super();
-		this.circlePoint = circlePoint;
+		this.points = circlePoint;
 		this.radius = radius;
 	}
 
@@ -30,13 +30,13 @@ public class Circle extends Shape {
 		this.c = c;
 		this.radius = myJPanel.calculateRadius(point);
 		point.remove(0);
-		this.circlePoint = point;
+		this.points = point;
 	}
 	public Circle(List<Point> point) {
 		super();
 		this.radius = myJPanel.calculateRadius(point);
 		point.remove(1);		//remove the other point in list, because we don't need to save that because we have done calculate the radius.
-		this.circlePoint = point;
+		this.points = point;
 	}
 	
 	/* Getters & Setters */
@@ -50,12 +50,12 @@ public class Circle extends Shape {
 
 	@Override
 	public List<Point> getPoints() {
-		return circlePoint;
+		return points;
 	}
 
 	@Override
 	public void setPoints(List<Point> circlePoint) {
-		this.circlePoint = circlePoint;
+		this.points = circlePoint;
 	}
 
 	public int getRadius() {
@@ -69,7 +69,18 @@ public class Circle extends Shape {
 	/* Draw */
 	@Override
 	public void draw() {
-		main.pane.drawCircle(c, circlePoint, radius);
+		main.pane.drawCircle(c, points, radius);
 	}
 
+	@Override
+	public String toString(){
+		//NamedColor nc;
+		//nc.compareTo();
+		
+		return "2,"
+			+points.get(0).x + ","	//x0
+			+points.get(0).y + ","	//y0
+			+radius +		   ","	//radius
+			+"black.";				//color
+	}
 }

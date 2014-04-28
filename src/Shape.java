@@ -10,12 +10,14 @@ public class Shape {
 	}
 	public void setPoints(List<Point> linePoints) {
 		// TODO Auto-generated method stub
-		
 	}
 	
 	/* Draw*/
 	public void draw(){
 	}
 
+	public String toString(){
+		return null;
+	}
 	
 }
