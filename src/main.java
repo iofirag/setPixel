@@ -99,13 +99,13 @@ public class main {
 				Component c = null;
 				String pathString = promptForFile(c);
 				Path path = Paths.get(pathString);
-
 				try {
+					pane.fillCanvas(Color.white);
 					List <String>lines = null;
 					//parse can open .TXT format that saved in type UTF-8
 					lines = Files.readAllLines(path, StandardCharsets.US_ASCII);
 					parseLines_ToObjects(lines);	//save all objects in shapeList
-					pane.fillCanvas(Color.white);
+					
 					for (Shape s :shapeList){
 						s.draw();
 					}
@@ -248,6 +248,7 @@ public class main {
 								case 5:	//C.x point
 								case 7:	//D.x point
 									numBuff_x = Integer.parseInt(buff_string.toString());
+									break;
 								case 2:	//A.y point
 								case 4:	//B.y point
 								case 6:	//C.y point
@@ -653,7 +654,7 @@ public class main {
     }
 
 	public static String promptForFile( Component parent ){
-	    JFileChooser fc = new JFileChooser();
+	    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
 	    fc.setFileSelectionMode( JFileChooser.FILES_ONLY );
 	    if( fc.showOpenDialog( parent ) == JFileChooser.APPROVE_OPTION )
 	    {
