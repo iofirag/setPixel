@@ -446,7 +446,7 @@ public class main {
         transShifting.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				shape=4;		//init
+				shape=5;		//init
 			}
 		});
         JMenuItem transScale = new JMenuItem("Scale");			//סילום
@@ -454,7 +454,7 @@ public class main {
         transScale.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				shape=5;		//init
+				shape=6;		//init
 			}
 		});
         JMenuItem transRotating = new JMenuItem("Rotating");	//סיבוב
@@ -462,7 +462,7 @@ public class main {
         transRotating.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				shape=6;		//init
+				shape=7;		//init
 			}
 		});
         JMenuItem transMirroring = new JMenuItem("Mirroring");	//שיקוף
@@ -470,7 +470,7 @@ public class main {
         transMirroring.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				shape=7;		//init
+				shape=8;		//init
 			}
 		});
         JMenuItem transCut = new JMenuItem("Cut");				//גזירה
@@ -478,7 +478,7 @@ public class main {
         transCut.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				shape=8;		//init
+				shape=9;		//init
 			}
 		});
         transformsMenu.add(transShifting);
@@ -635,7 +635,23 @@ public class main {
 				
 				//drawShape_dragg();
 //				switch (shape){
-//				case 4:
+//				case 5:
+//				 	int dragDx = lastDrag_x - pointPressed.x;
+//				 	int dragDy = lastDrag_y - pointPressed.y;
+//				 	//pointPressed.x = lastDrag_x;
+//				 	//pointPressed.y = lastDrag_y;
+//				 	//first ,clear the canvas 
+//				 	pane.fillCanvas(Color.white);
+//				 	for (int i=0; i<shapeList.size(); i++){
+//				 	//Change current shape cordinations
+//				 		for ( int j=0; j < shapeList.get(i).getPoints().size(); j++ ){
+//				 			shapeList.get(i).getPoints().get(j).x += dragDx;
+//				 			shapeList.get(i).getPoints().get(j).y += dragDy;
+//				 		}
+//				 		//Draw current shape
+//				 		shapeList.get(i).draw();
+//				 		pane.repaint();
+//				 	}
 //					break;
 //				}
 				
