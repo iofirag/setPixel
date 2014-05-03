@@ -634,10 +634,31 @@ public class main {
 				lastDrag_y = (int) e.getPoint().getY()-53;		//Fix
 				
 				//drawShape_dragg();
-				switch (shape){
-				case 4:
-					break;
-				}
+//				switch (shape){
+//				case 4:
+//					break;
+//				}
+				
+				//shift transformation
+				 if (shape==1)
+				 {
+				 	int dragDx = lastDrag_x - pointPressed.x;
+				 	int dragDy = lastDrag_y - pointPressed.y;
+				 	pointPressed.x = lastDrag_x;
+				 	pointPressed.y = lastDrag_y;
+				 	//first ,clear the canvas 
+				 	pane.fillCanvas(Color.white);
+				 	for (int i=0; i<shapeList.size(); i++){
+				 	//Change current shape cordinations
+				 		for ( int j=0; j < shapeList.get(i).getPoints().size(); j++ ){
+				 			shapeList.get(i).getPoints().get(j).x += dragDx;
+				 			shapeList.get(i).getPoints().get(j).y += dragDy;
+				 		}
+				 		//Draw current shape
+				 		shapeList.get(i).draw();
+				 		pane.repaint();
+				 	}
+				 }
 			}
 		});
         
