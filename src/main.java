@@ -39,7 +39,6 @@ public class main {
 	static final int WIDTH = 900;	//x
     static final int HEIGHT = 500;	//y
     
-    
     //panel
     static myJPanel pane;
    
@@ -53,17 +52,19 @@ public class main {
 	static int lastDrag_y=0;
 	static boolean MouseExitFromWindow=false;
 	
+	// Transforms
+	//static int transform=0;
+	
 	// Shape & color user choose
 	static int shape = 1;		// 1=Line(default)   2=Circle   3=Polygon	4=Bezier curve
 	static Color color = Color.black;
-		  
-	//bezier variables
 	
+	// Bezier variable
 	static List<Point> bezierPoints=new ArrayList<>();
-	//static int numOfPoints=0;
 		
-	//poligon variable
+	// poligon variable
 	static int poligon_vertex =0;
+	
 	
 	public static void main(String[] args) {
 		//see all the properties in java
@@ -341,6 +342,7 @@ public class main {
         objectItem_circle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
 				shape=2;
 			}
 		});
@@ -349,6 +351,7 @@ public class main {
         objectItem_poligon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
 				shape=3;
 
 				//custom title, custom icon
@@ -360,6 +363,7 @@ public class main {
         objectItem_bezier.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
 				shape=4;
 			}
 		});
@@ -442,22 +446,7 @@ public class main {
         transShifting.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//custom title, custom icon
-				String result = JOptionPane.showInputDialog("How many px sifting in X:");
-				int shiftX= Integer.parseInt(result);
-				result = JOptionPane.showInputDialog("How many px sifting in Y:");
-				int shiftY= Integer.parseInt(result);
-				pane.fillCanvas(Color.white);
-				
-				for (Shape s :shapeList){
-					for (int i=0; i<s.getPoints().size(); i++){
-						s.getPoints().get(i).x+=shiftX;
-						s.getPoints().get(i).y+=shiftY;
-					}
-					s.draw();
-				}
-				shiftX=0;	//init
-				shiftY=0;	//init
+				shape=4;		//init
 			}
 		});
         JMenuItem transScale = new JMenuItem("Scale");			//סילום
@@ -465,7 +454,7 @@ public class main {
         transScale.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				shape=5;		//init
 			}
 		});
         JMenuItem transRotating = new JMenuItem("Rotating");	//סיבוב
@@ -473,7 +462,7 @@ public class main {
         transRotating.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				shape=6;		//init
 			}
 		});
         JMenuItem transMirroring = new JMenuItem("Mirroring");	//שיקוף
@@ -481,7 +470,7 @@ public class main {
         transMirroring.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				shape=7;		//init
 			}
 		});
         JMenuItem transCut = new JMenuItem("Cut");				//גזירה
@@ -489,7 +478,7 @@ public class main {
         transCut.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				shape=8;		//init
 			}
 		});
         transformsMenu.add(transShifting);
@@ -507,7 +496,7 @@ public class main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				pane.fillCanvas(Color.white);
-				System.out.println( shapeList.toString() );
+				//System.out.println( shapeList.toString() );
 				shapeList.clear();
 			}
 		});
@@ -556,25 +545,18 @@ public class main {
 				System.out.println("Released	(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				pointRelease= new Point(e.getPoint().x-8, e.getPoint().y-53 );
 
+				//drawShape_release();
 				switch (shape){
 				// Draw a line
 				case 1: 
 					List<Point> linePoints=new ArrayList<>();
 					linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
+					linePoints.add(new Point((int)pointRelease.x,(int)pointRelease.y));	//end	
 					
-					if (WIDTH- pointRelease.getX() >=0 && HEIGHT- pointRelease.getY() >=0 ){
-  						linePoints.add(new Point((int)pointRelease.getX(),(int)pointRelease.getY()));	//end
-  						Line line = new Line(color, linePoints);  
-  						line.draw();
-  						shapeList.add(line);	//history
-					}
-  					else{ 
-  						linePoints.add(new Point((int)lastDrag_x,(int)lastDrag_y));	//end	
-  						Line line = new Line(color, linePoints);  
-  						line.draw();
-  						shapeList.add(line);	//history
-  					}
-  					break;
+					Line line = new Line(color, linePoints);  
+					line.draw();
+					shapeList.add(line);	//history
+					break;
 				//Draw a circle
 				case 2:
 					List<Point> circlePoints=new ArrayList<>();
@@ -618,6 +600,7 @@ public class main {
 			public void mouseClicked(MouseEvent e) {
 				System.out.println("Clicked		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				
+				// Draw Bezier
 				if ((shape==4) && (bezierPoints.size()<=4)){ //shape 4 = bezier curve
 					pane.putSuperPixel(e.getX()-8,e.getY()-53,color);	//put big pixel + Fix
 					bezierPoints.add(new Point(e.getX()-8,e.getY()-53));	//save point to list + Fix
@@ -629,7 +612,6 @@ public class main {
 
 						//System.out.println(shapeList.get(0) );
 						bezierPoints.clear();	//init
-						
 					}
 				}	
 				
@@ -646,20 +628,44 @@ public class main {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				System.out.println("Dragged		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
-				lastDrag_x= (int) e.getPoint().getX()-8;		//Fix
-				lastDrag_y= (int) e.getPoint().getY()-53;		//Fix
+				
+				//save points
+				lastDrag_x = (int) e.getPoint().getX()-8;		//Fix
+				lastDrag_y = (int) e.getPoint().getY()-53;		//Fix
+				
+				//drawShape_dragg();
+				switch (shape){
+				case 4:
+					break;
+				}
 			}
 		});
         
     }
 
 	public static String promptForFile( Component parent ){
-	    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+	    JFileChooser fc = new JFileChooser(System.getProperty("user.dir")+"/pictures");
 	    fc.setFileSelectionMode( JFileChooser.FILES_ONLY );
 	    if( fc.showOpenDialog( parent ) == JFileChooser.APPROVE_OPTION )
 	    {
 	        return fc.getSelectedFile().getAbsolutePath();
 	    }
 	    return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public static void drawShape_release(){
+	}
+	
+	public static void drawShape_dragg(){
 	}
 }
