@@ -46,8 +46,7 @@ public class myJPanel extends JPanel {
 	// ********************************************************
 
 	public void fillCanvas(Color c) {
-		if (main.shapeList.size()>0)
-			main.shapeList.clear();
+		System.out.println("clear");
 		for (int x = 0; x < MAX_DRAW_X+1; x++) {
 			for (int y = 0; y < MAX_DRAW_Y+1; y++) {
 				putPixel(x, y, c);
