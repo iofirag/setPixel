@@ -46,11 +46,6 @@ public class myJPanel extends JPanel {
 	// ********************************************************
 
 	public void fillCanvas(Color c) {
-<<<<<<< HEAD
-=======
-	/*	if (main.shapeList.size()>0)
-			main.shapeList.clear();*/
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 		System.out.println("clear");
 		for (int x = 0; x < MAX_DRAW_X+1; x++) {
 			for (int y = 0; y < MAX_DRAW_Y+1; y++) {

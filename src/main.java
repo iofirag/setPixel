@@ -56,11 +56,7 @@ public class main {
 	
 	// Shape & color user choose
 	static int shape = 1;		// 1=Line(default)   2=Circle   3=Polygon	4=Bezier curve
-<<<<<<< HEAD
 	//static int transformation = 0;
-=======
-	static int transformation = 0;
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 	static Color color = Color.black;
 		  
 	//bezier variables
@@ -337,7 +333,6 @@ public class main {
         objectItem_line.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				transformation = 0;
 				shape=1;
 			}
 		});
@@ -346,7 +341,6 @@ public class main {
         objectItem_circle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				transformation = 0;
 				shape=2;
 			}
 		});
@@ -355,7 +349,6 @@ public class main {
         objectItem_poligon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				transformation = 0;
 				shape=3;
 
 				//custom title, custom icon
@@ -367,7 +360,6 @@ public class main {
         objectItem_bezier.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				transformation = 0;
 				shape=4;
 			}
 		});
@@ -450,29 +442,8 @@ public class main {
         transShifting.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
 				shape = 5;
 			}
-=======
-				transformation = 1;
-		/*		//custom title, custom icon
-				String result = JOptionPane.showInputDialog("How many px sifting in X:");
-				int shiftX= Integer.parseInt(result);
-				result = JOptionPane.showInputDialog("How many px sifting in Y:");
-				int shiftY= Integer.parseInt(result);
-				pane.fillCanvas(Color.white);
-				
-				for (Shape s :shapeList){
-					for (int i=0; i<s.getPoints().size(); i++){
-						s.getPoints().get(i).x+=shiftX;
-						s.getPoints().get(i).y+=shiftY;
-					}
-					s.draw();
-				}
-				shiftX=0;	//init
-				shiftY=0;	//init
-*/			}
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 		});
         JMenuItem transScale = new JMenuItem("Scale");			//ριμεν
         //transMove.setMnemonic(KeyEvent.VK_F1);
@@ -520,17 +491,10 @@ public class main {
         clearScreen_menu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
 
 				pane.fillCanvas(Color.white);
 				shapeList.clear();
 				System.out.println( shapeList.toString() );
-=======
-				transformation=0;
-				pane.fillCanvas(Color.white);
-				System.out.println( shapeList.toString() );
-				//shapeList.clear();
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 			}
 		});
 
@@ -674,16 +638,10 @@ public class main {
 				System.out.println("Dragged		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				lastDrag_x= (int) e.getPoint().getX()-8;		//Fix
 				lastDrag_y= (int) e.getPoint().getY()-53;		//Fix
-<<<<<<< HEAD
 				
 				//shift transformation
 				switch (shape) {
 				case 5:
-=======
-				//shift transformation
-				if (transformation==1)
-				{
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 					int dragDx = lastDrag_x - pointPressed.x;
 					int dragDy = lastDrag_y - pointPressed.y;
 					pointPressed.x = lastDrag_x;
@@ -700,10 +658,7 @@ public class main {
 						shapeList.get(i).draw();
 						pane.repaint();
 					}
-<<<<<<< HEAD
 					break;
-=======
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 				}
 			}
 		});
