@@ -32,6 +32,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.RepaintManager;
 
 
 public class main {
@@ -55,6 +56,7 @@ public class main {
 	
 	// Shape & color user choose
 	static int shape = 1;		// 1=Line(default)   2=Circle   3=Polygon	4=Bezier curve
+	static int transformation = 0;
 	static Color color = Color.black;
 		  
 	//bezier variables
@@ -99,13 +101,13 @@ public class main {
 				Component c = null;
 				String pathString = promptForFile(c);
 				Path path = Paths.get(pathString);
-
 				try {
+					pane.fillCanvas(Color.white);
 					List <String>lines = null;
 					//parse can open .TXT format that saved in type UTF-8
 					lines = Files.readAllLines(path, StandardCharsets.US_ASCII);
 					parseLines_ToObjects(lines);	//save all objects in shapeList
-					pane.fillCanvas(Color.white);
+					
 					for (Shape s :shapeList){
 						s.draw();
 					}
@@ -248,6 +250,7 @@ public class main {
 								case 5:	//C.x point
 								case 7:	//D.x point
 									numBuff_x = Integer.parseInt(buff_string.toString());
+									break;
 								case 2:	//A.y point
 								case 4:	//B.y point
 								case 6:	//C.y point
@@ -332,6 +335,7 @@ public class main {
         objectItem_line.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				transformation = 0;
 				shape=1;
 			}
 		});
@@ -340,6 +344,7 @@ public class main {
         objectItem_circle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				transformation = 0;
 				shape=2;
 			}
 		});
@@ -348,6 +353,7 @@ public class main {
         objectItem_poligon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				transformation = 0;
 				shape=3;
 
 				//custom title, custom icon
@@ -359,6 +365,7 @@ public class main {
         objectItem_bezier.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				transformation = 0;
 				shape=4;
 			}
 		});
@@ -441,7 +448,8 @@ public class main {
         transShifting.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//custom title, custom icon
+				transformation = 1;
+		/*		//custom title, custom icon
 				String result = JOptionPane.showInputDialog("How many px sifting in X:");
 				int shiftX= Integer.parseInt(result);
 				result = JOptionPane.showInputDialog("How many px sifting in Y:");
@@ -457,7 +465,7 @@ public class main {
 				}
 				shiftX=0;	//init
 				shiftY=0;	//init
-			}
+*/			}
 		});
         JMenuItem transScale = new JMenuItem("Scale");			//ριμεν
         //transMove.setMnemonic(KeyEvent.VK_F1);
@@ -505,9 +513,10 @@ public class main {
         clearScreen_menu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				transformation=0;
 				pane.fillCanvas(Color.white);
 				System.out.println( shapeList.toString() );
-				shapeList.clear();
+				//shapeList.clear();
 			}
 		});
 
@@ -561,7 +570,7 @@ public class main {
 					List<Point> linePoints=new ArrayList<>();
 					linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
 					
-					if (WIDTH- pointRelease.getX() >=0 && HEIGHT- pointRelease.getY() >=0 ){
+					if (WIDTH - pointRelease.getX() >=0 && HEIGHT - pointRelease.getY() >=0 ){
   						linePoints.add(new Point((int)pointRelease.getX(),(int)pointRelease.getY()));	//end
   						Line line = new Line(color, linePoints);  
   						line.draw();
@@ -593,6 +602,10 @@ public class main {
 					Poligon poligon = new Poligon(color, polygonPoints, poligon_vertex);  
 					poligon.draw();
 					shapeList.add(poligon);	//history
+					break;
+				//shift transformation 
+				case 4:
+					
 					break;
 				}
 			}
@@ -647,13 +660,33 @@ public class main {
 				System.out.println("Dragged		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				lastDrag_x= (int) e.getPoint().getX()-8;		//Fix
 				lastDrag_y= (int) e.getPoint().getY()-53;		//Fix
+				//shift transformation
+				if (transformation==1)
+				{
+					int dragDx = lastDrag_x - pointPressed.x;
+					int dragDy = lastDrag_y - pointPressed.y;
+					pointPressed.x = lastDrag_x;
+					pointPressed.y = lastDrag_y;
+					//first ,clear the canvas 
+					pane.fillCanvas(Color.white);
+					for (int i=0; i<shapeList.size(); i++){
+						//Change current shape cordinations
+						for ( int j=0; j < shapeList.get(i).getPoints().size(); j++ ){
+							shapeList.get(i).getPoints().get(j).x += dragDx;
+							shapeList.get(i).getPoints().get(j).y += dragDy;
+						}
+						//Draw current shape
+						shapeList.get(i).draw();
+						pane.repaint();
+					}
+				}
 			}
 		});
         
     }
 
 	public static String promptForFile( Component parent ){
-	    JFileChooser fc = new JFileChooser();
+	    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
 	    fc.setFileSelectionMode( JFileChooser.FILES_ONLY );
 	    if( fc.showOpenDialog( parent ) == JFileChooser.APPROVE_OPTION )
 	    {
