@@ -56,15 +56,13 @@ public class main {
 	
 	// Shape & color user choose
 	static int shape = 1;		// 1=Line(default)   2=Circle   3=Polygon	4=Bezier curve
-<<<<<<< HEAD
-	//static int transformation = 0;
-=======
 	static int transformation = 0;
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 	static Color color = Color.black;
 		  
 	//bezier variables
+	
 	static List<Point> bezierPoints=new ArrayList<>();
+	//static int numOfPoints=0;
 		
 	//poligon variable
 	static int poligon_vertex =0;
@@ -446,14 +444,10 @@ public class main {
         
         // Transforms
         JMenu transformsMenu = new JMenu ("Transforms");
-        JMenuItem transShifting = new JMenuItem("Shift");		//הזזה
+        JMenuItem transShifting = new JMenuItem("Shift");	//הזזה
         transShifting.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
-				shape = 5;
-			}
-=======
 				transformation = 1;
 		/*		//custom title, custom icon
 				String result = JOptionPane.showInputDialog("How many px sifting in X:");
@@ -472,14 +466,13 @@ public class main {
 				shiftX=0;	//init
 				shiftY=0;	//init
 */			}
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 		});
         JMenuItem transScale = new JMenuItem("Scale");			//סילום
         //transMove.setMnemonic(KeyEvent.VK_F1);
         transScale.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				shape = 6;
+				
 			}
 		});
         JMenuItem transRotating = new JMenuItem("Rotating");	//סיבוב
@@ -520,17 +513,9 @@ public class main {
         clearScreen_menu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
-
-				pane.fillCanvas(Color.white);
-				shapeList.clear();
-				System.out.println( shapeList.toString() );
-=======
-				transformation=0;
 				pane.fillCanvas(Color.white);
 				System.out.println( shapeList.toString() );
 				//shapeList.clear();
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 			}
 		});
 
@@ -674,16 +659,9 @@ public class main {
 				System.out.println("Dragged		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				lastDrag_x= (int) e.getPoint().getX()-8;		//Fix
 				lastDrag_y= (int) e.getPoint().getY()-53;		//Fix
-<<<<<<< HEAD
-				
-				//shift transformation
-				switch (shape) {
-				case 5:
-=======
 				//shift transformation
 				if (transformation==1)
 				{
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 					int dragDx = lastDrag_x - pointPressed.x;
 					int dragDy = lastDrag_y - pointPressed.y;
 					pointPressed.x = lastDrag_x;
@@ -700,10 +678,6 @@ public class main {
 						shapeList.get(i).draw();
 						pane.repaint();
 					}
-<<<<<<< HEAD
-					break;
-=======
->>>>>>> d5dfac10a3aae3bc6d21bd81be70e1469f05937c
 				}
 			}
 		});
