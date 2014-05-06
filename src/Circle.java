@@ -29,13 +29,13 @@ public class Circle extends Shape {
 		super();
 		this.color = c;
 		this.radius = myJPanel.calculateRadius(point);
-		point.remove(0);
+		//point.remove(1);
 		this.points = point;
 	}
 	public Circle(List<Point> point) {
 		super();
 		this.radius = myJPanel.calculateRadius(point);
-		point.remove(1);		//remove the other point in list, because we don't need to save that because we have done calculate the radius.
+		//point.remove(1);		//remove the other point in list, because we don't need to save that because we have done calculate the radius.
 		this.points = point;
 	}
 	

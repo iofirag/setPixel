@@ -175,25 +175,20 @@ public class myJPanel extends JPanel {
 	public void drawCircle(Color c, List<Point> points, int radius) {
 		int x = radius;
 		int y = 0;
+		
+		int x0 = (int) points.get(0).getX();
+		int y0 = (int) points.get(0).getY();
 		int radiusError = 1 - x;
 
 		while (x >= y) {
-			putPixel(x + (int) points.get(0).getX(), y
-					+ (int) points.get(0).getY(), c);
-			putPixel(y + (int) points.get(0).getX(), x
-					+ (int) points.get(0).getY(), c);
-			putPixel(-x + (int) points.get(0).getX(), y
-					+ (int) points.get(0).getY(), c);
-			putPixel(-y + (int) points.get(0).getX(), x
-					+ (int) points.get(0).getY(), c);
-			putPixel(-x + (int) points.get(0).getX(), -y
-					+ (int) points.get(0).getY(), c);
-			putPixel(-y + (int) points.get(0).getX(), -x
-					+ (int) points.get(0).getY(), c);
-			putPixel(x + (int) points.get(0).getX(), -y
-					+ (int) points.get(0).getY(), c);
-			putPixel(y + (int) points.get(0).getX(), -x
-					+ (int) points.get(0).getY(), c);
+			putPixel(x0 + x,	y0 + y,		c);
+			putPixel(x0 + y,	y0 + x, 	c);
+			putPixel(x0 + -x,	y0 + y, 	c);
+			putPixel(x0 + -y,	y0 + x, 	c);
+			putPixel(x0 + -x,	y0 + -y,	c);
+			putPixel(x0 + -y,	y0 + -x,	c);
+			putPixel(x0 + x,	y0 + -y,	c);
+			putPixel(x0 + y,	y0 + -x,	c);
 			y++;
 			if (radiusError < 0) {
 				radiusError += 2 * y + 1;

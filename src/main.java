@@ -486,8 +486,8 @@ public class main {
         
         // Transforms
         JMenu transformsMenu = new JMenu ("Transforms");
-        JMenuItem transShifting = new JMenuItem("Shift");		//הזזה
-        transShifting.addActionListener(new ActionListener() {
+        JMenuItem transTranslation = new JMenuItem("Translation");		//הזזה
+        transTranslation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 5;
@@ -500,34 +500,34 @@ public class main {
 				itemChecked = 6;
 			}
 		});
-        JMenuItem transRotating = new JMenuItem("Rotating");	//סיבוב
-        transRotating.addActionListener(new ActionListener() {
+        JMenuItem transRotation = new JMenuItem("Rotation");	//סיבוב
+        transRotation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 7;
 			}
 		});
-        JMenuItem transMirroring = new JMenuItem("Mirroring");	//שיקוף
+        JMenuItem transMirror = new JMenuItem("Mirror");	//שיקוף
         //transMove.setMnemonic(KeyEvent.VK_F1);
-        transMirroring.addActionListener(new ActionListener() {
+        transMirror.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 8;
 			}
 		});
-        JMenuItem transCut = new JMenuItem("Cut");				//גזירה
+        JMenuItem transShearing = new JMenuItem("Shearing");				//גזירה
         //transMove.setMnemonic(KeyEvent.VK_F1);
-        transCut.addActionListener(new ActionListener() {
+        transShearing.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 9;
 			}
 		});
-        transformsMenu.add(transShifting);
+        transformsMenu.add(transTranslation);
         transformsMenu.add(transScaling);
-        transformsMenu.add(transRotating);
-        transformsMenu.add(transMirroring);
-        transformsMenu.add(transCut);
+        transformsMenu.add(transRotation);
+        transformsMenu.add(transMirror);
+        transformsMenu.add(transShearing);
         
         
 
@@ -577,34 +577,27 @@ public class main {
 				System.out.println("mouseWheelMoved");
 				
 				switch (itemChecked){
-				case 6:
+				case 6:		// Scaling
+					Shape snew=new Shape();
+					int sx = 1;
+					int sy = 1;
 					if (e.getWheelRotation()>0 ){
 						System.out.println("mouseWheelMoved UP");	//zoom-out
 						if (zoom>1){	//zoom=1 is minimal
 							zoom--;
-							System.out.println("zoom= "+zoom);
-							pane.fillCanvas(Color.white);
-							for (Shape s : shapeList){
-								for (int i=0; i<s.getPoints().size(); i++){
-									s.getPoints().get(i).x = s.getPoints().get(i).x/(zoom/100);
-									s.getPoints().get(i).y = s.getPoints().get(i).y/(zoom/100);
-								}
-								s.draw();
-							}
 						}
 					}else{
 						System.out.println("mouseWheelMoved DOWN");	//zoom-in
 						zoom++;
-						System.out.println("zoom= "+zoom);
-						pane.fillCanvas(Color.white);
-		   				for (Shape s : shapeList){
-		   					for (int i=0; i<s.getPoints().size(); i++){
-								s.getPoints().get(i).x = s.getPoints().get(i).x*(zoom/100);
-								s.getPoints().get(i).y = s.getPoints().get(i).y*(zoom/100);
-							}
-							s.draw();
-		   				}
-		   				//System.out.println( shapeList.toString() );
+					}
+					System.out.println("zoom= "+zoom);
+					pane.fillCanvas(Color.white);
+					for (Shape s : shapeList){
+						for (int i=0; i<s.getPoints().size(); i++){
+							s.getPoints().get(i).x =  sx* s.getPoints().get(i).x;
+							s.getPoints().get(i).y =  sy* s.getPoints().get(i).y;
+						}
+						s.draw();
 					}
 					break;
 				}
@@ -638,8 +631,8 @@ public class main {
 				//Draw a circle
 				case 2:
 					List<Point> circlePoints=new ArrayList<>();
-					circlePoints.add(new Point(pointRelease.x, pointRelease.y));
 					circlePoints.add(new Point(pointPressed.x, pointPressed.y));
+					circlePoints.add(new Point(pointRelease.x, pointRelease.y));
 					
 					Circle circle = new Circle(color, circlePoints);  
 					circle.draw();
