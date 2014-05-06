@@ -5,7 +5,7 @@ import java.util.List;
 
 
 public class Bezier extends Shape {
-	Color c=Color.BLACK;
+	Color color=Color.BLACK;
 	List<Point> points;
 	
 	/* Ctor. */
@@ -18,11 +18,19 @@ public class Bezier extends Shape {
 	}
 	public Bezier(Color c, List<Point> bezierPoints) {
 		super();
-		this.c = c;
+		this.color = c;
 		this.points = new ArrayList<>(bezierPoints);
 	}
 
 	/* Getters & Setters */
+	@Override
+	public Color getColor() {
+		return color;
+	}
+	@Override
+	public void setColor(Color color) {
+		this.color = color;
+	}
 	@Override
 	public List<Point> getPoints() {
 		return points;
@@ -30,12 +38,6 @@ public class Bezier extends Shape {
 	@Override
 	public void setPoints(List<Point> points) {
 		this.points = new ArrayList<>(points);
-	}
-	public Color getC() {
-		return c;
-	}
-	public void setC(Color c) {
-		this.c = c;
 	}
 
 	
@@ -52,7 +54,7 @@ public class Bezier extends Shape {
 		System.out.println("x3="+points.get(3).x);
 		System.out.println("y3="+points.get(3).y);
 		
-		main.pane.drawBezierCurve(c, points);
+		main.pane.drawBezierCurve(color, points);
 		
 		System.out.println("\nx0="+points.get(0).x);
 		System.out.println("y0="+points.get(0).y);

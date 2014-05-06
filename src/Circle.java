@@ -3,7 +3,7 @@ import java.awt.Point;
 import java.util.List;
 
 public class Circle extends Shape {
-	Color c = Color.BLACK;
+	Color color = Color.BLACK;
 	List<Point> points;
 	int radius;
 
@@ -14,7 +14,7 @@ public class Circle extends Shape {
 
 	public Circle(Color c, List<Point> circlePoint, int radius) {
 		super();
-		this.c = c;
+		this.color = c;
 		this.points = circlePoint;
 		this.radius = radius;
 	}
@@ -27,7 +27,7 @@ public class Circle extends Shape {
 
 	public Circle(Color c, List<Point> point) {
 		super();
-		this.c = c;
+		this.color = c;
 		this.radius = myJPanel.calculateRadius(point);
 		point.remove(0);
 		this.points = point;
@@ -40,12 +40,13 @@ public class Circle extends Shape {
 	}
 	
 	/* Getters & Setters */
-	public Color getC() {
-		return c;
+	@Override
+	public Color getColor() {
+		return color;
 	}
-
-	public void setC(Color c) {
-		this.c = c;
+	@Override
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 	@Override
@@ -69,7 +70,7 @@ public class Circle extends Shape {
 	/* Draw */
 	@Override
 	public void draw() {
-		main.pane.drawCircle(c, points, radius);
+		main.pane.drawCircle(color, points, radius);
 	}
 
 	@Override

@@ -13,6 +13,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -46,7 +48,7 @@ public class main {
    
     //History object draw
 	static List<Shape> shapeList=new ArrayList<>();
-	
+	static int zoom=100;	// 100%
 	// Mouse variables
 	static Point pointPressed =null;
 	static Point pointRelease =null;
@@ -54,9 +56,19 @@ public class main {
 	static int lastDrag_y=0;
 	static boolean MouseExitFromWindow=false;
 	
-	// Shape & color user choose
-	static int shape = 1;		// 1=Line(default)   2=Circle   3=Polygon	4=Bezier curve
-	//static int transformation = 0;
+	// item & color user choose
+	static int itemChecked = 1;		//	Objects:
+									//		1= Line		(default)   
+									//		2= Circle   
+									//		3= Polygon	
+									//		4= Bezier curve
+									//  
+									//	Transforms:
+									//		5= Shift
+									//		6= Scale   
+									//		7= Rotating	
+									//		8= Mirroring
+									//		9= Cut
 	static Color color = Color.black;
 		  
 	//bezier variables
@@ -324,7 +336,43 @@ public class main {
         fileMenu.add(saveFile);
         
 //************************************************
-     
+        JMenu editMenu = new JMenu ("Edit");
+        editMenu.setMnemonic(KeyEvent.VK_E);
+        	// Clear Screen button
+           JMenuItem unDo_menu = new JMenuItem("Undo");
+           unDo_menu.addActionListener(new ActionListener() {
+   			@Override
+   			public void actionPerformed(ActionEvent e) {
+//   				if (shapeList.size()>0){
+//   					pane.fillCanvas(Color.white);
+//   					shapeList.remove(shapeList.size()-1);
+//   					for (Shape s : shapeList){
+//   						s.draw();
+//   					}
+//   				}
+   				if (shapeList.size()>0){
+   					Shape s = shapeList.get(shapeList.size()-1);
+   					s.setColor(Color.WHITE);
+   					s.draw();
+   					shapeList.remove(shapeList.size()-1);
+   				}
+   			}
+   		});
+           // Clear Screen button
+           JMenuItem clearScreen_menu = new JMenuItem("Clear Screen");
+           clearScreen_menu.addActionListener(new ActionListener() {
+   			@Override
+   			public void actionPerformed(ActionEvent e) {
+
+   				pane.fillCanvas(Color.white);
+   				shapeList.clear();
+   				System.out.println( shapeList.toString() );
+   			}
+   		});
+           editMenu.add(unDo_menu);
+           editMenu.add(clearScreen_menu);
+           
+ //************************************************
         // Objects Menu
         JMenu objectsMenu = new JMenu ("Objects");
         objectsMenu.setMnemonic(KeyEvent.VK_O);
@@ -333,7 +381,7 @@ public class main {
         objectItem_line.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				shape=1;
+				itemChecked=1;
 			}
 		});
         JMenuItem objectItem_circle = new JMenuItem("Circle");
@@ -341,7 +389,7 @@ public class main {
         objectItem_circle.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				shape=2;
+				itemChecked=2;
 			}
 		});
         JMenuItem objectItem_poligon = new JMenuItem("Poligon");
@@ -349,7 +397,7 @@ public class main {
         objectItem_poligon.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				shape=3;
+				itemChecked=3;
 
 				//custom title, custom icon
 				String result = JOptionPane.showInputDialog("Enter poligon vertex:");
@@ -360,7 +408,7 @@ public class main {
         objectItem_bezier.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				shape=4;
+				itemChecked=4;
 			}
 		});
         objectsMenu.add(objectItem_line);
@@ -442,23 +490,21 @@ public class main {
         transShifting.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				shape = 5;
+				itemChecked = 5;
 			}
 		});
-        JMenuItem transScale = new JMenuItem("Scale");			//סילום
-        //transMove.setMnemonic(KeyEvent.VK_F1);
-        transScale.addActionListener(new ActionListener() {
+        JMenuItem transScaling = new JMenuItem("Scaling");			//סילום
+        transScaling.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				shape = 6;
+				itemChecked = 6;
 			}
 		});
         JMenuItem transRotating = new JMenuItem("Rotating");	//סיבוב
-        //transMove.setMnemonic(KeyEvent.VK_F1);
         transRotating.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				itemChecked = 7;
 			}
 		});
         JMenuItem transMirroring = new JMenuItem("Mirroring");	//שיקוף
@@ -466,7 +512,7 @@ public class main {
         transMirroring.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				itemChecked = 8;
 			}
 		});
         JMenuItem transCut = new JMenuItem("Cut");				//גזירה
@@ -474,29 +520,17 @@ public class main {
         transCut.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				itemChecked = 9;
 			}
 		});
         transformsMenu.add(transShifting);
-        transformsMenu.add(transScale);
+        transformsMenu.add(transScaling);
         transformsMenu.add(transRotating);
         transformsMenu.add(transMirroring);
         transformsMenu.add(transCut);
         
         
-//************************************************
-        
-        // Clear Screen button
-        JMenuItem clearScreen_menu = new JMenuItem("Clear Screen");
-        clearScreen_menu.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
 
-				pane.fillCanvas(Color.white);
-				shapeList.clear();
-				System.out.println( shapeList.toString() );
-			}
-		});
 
 //************************************************
         
@@ -522,10 +556,10 @@ public class main {
 //*********************************************
         
         menuBar.add(fileMenu);
+        menuBar.add(editMenu);
         menuBar.add(objectsMenu);
         menuBar.add(colorMenu);
         menuBar.add(transformsMenu);
-        menuBar.add(clearScreen_menu);
         menuBar.add(helpMenu);
 
         pane.setLayout(new BorderLayout());
@@ -536,18 +570,58 @@ public class main {
         frame.setVisible(true);
           
         // Mouse Listeners 
+        frame.addMouseWheelListener(new MouseWheelListener() {
+			
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				System.out.println("mouseWheelMoved");
+				
+				switch (itemChecked){
+				case 6:
+					if (e.getWheelRotation()>0 ){
+						System.out.println("mouseWheelMoved UP");	//zoom-out
+						if (zoom>1){	//zoom=1 is minimal
+							zoom--;
+							System.out.println("zoom= "+zoom);
+							pane.fillCanvas(Color.white);
+							for (Shape s : shapeList){
+								for (int i=0; i<s.getPoints().size(); i++){
+									s.getPoints().get(i).x = s.getPoints().get(i).x/(zoom/100);
+									s.getPoints().get(i).y = s.getPoints().get(i).y/(zoom/100);
+								}
+								s.draw();
+							}
+						}
+					}else{
+						System.out.println("mouseWheelMoved DOWN");	//zoom-in
+						zoom++;
+						System.out.println("zoom= "+zoom);
+						pane.fillCanvas(Color.white);
+		   				for (Shape s : shapeList){
+		   					for (int i=0; i<s.getPoints().size(); i++){
+								s.getPoints().get(i).x = s.getPoints().get(i).x*(zoom/100);
+								s.getPoints().get(i).y = s.getPoints().get(i).y*(zoom/100);
+							}
+							s.draw();
+		   				}
+		   				//System.out.println( shapeList.toString() );
+					}
+					break;
+				}
+			}
+		});
         frame.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				System.out.println("Released	(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				pointRelease= new Point(e.getPoint().x-8, e.getPoint().y-53 );
 
-				switch (shape){
+				switch (itemChecked){
 				// Draw a line
 				case 1: 
 					List<Point> linePoints=new ArrayList<>();
 					linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
-					
+
 					if (WIDTH - pointRelease.getX() >=0 && HEIGHT - pointRelease.getY() >=0 ){
   						linePoints.add(new Point((int)pointRelease.getX(),(int)pointRelease.getY()));	//end
   						Line line = new Line(color, linePoints);  
@@ -581,10 +655,6 @@ public class main {
 					poligon.draw();
 					shapeList.add(poligon);	//history
 					break;
-				//shift transformation 
-				case 4:
-					
-					break;
 				}
 			}
 
@@ -608,7 +678,7 @@ public class main {
 			public void mouseClicked(MouseEvent e) {
 				System.out.println("Clicked		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				
-				if ((shape==4) && (bezierPoints.size()<=4)){ //shape 4 = bezier curve
+				if ((itemChecked==4) && (bezierPoints.size()<=4)){ //shape 4 = bezier curve
 					pane.putSuperPixel(e.getX()-8,e.getY()-53,color);	//put big pixel + Fix
 					bezierPoints.add(new Point(e.getX()-8,e.getY()-53));	//save point to list + Fix
 					
@@ -617,7 +687,6 @@ public class main {
 						bezier.draw();
 						shapeList.add(bezier);	//history
 
-						//System.out.println(shapeList.get(0) );
 						bezierPoints.clear();	//init
 						
 					}
@@ -640,7 +709,7 @@ public class main {
 				lastDrag_y= (int) e.getPoint().getY()-53;		//Fix
 				
 				//shift transformation
-				switch (shape) {
+				switch (itemChecked) {
 				case 5:
 					int dragDx = lastDrag_x - pointPressed.x;
 					int dragDy = lastDrag_y - pointPressed.y;
@@ -664,7 +733,7 @@ public class main {
 		});
         
     }
-
+	
 	public static String promptForFile( Component parent ){
 	    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
 	    fc.setFileSelectionMode( JFileChooser.FILES_ONLY );

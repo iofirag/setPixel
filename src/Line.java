@@ -3,7 +3,7 @@ import java.awt.Point;
 import java.util.List;
 
 public class Line extends Shape {
-	Color c=Color.BLACK;
+	Color color=Color.BLACK;
 	List<Point> points;
 	
 	/* Ctor. */
@@ -12,7 +12,7 @@ public class Line extends Shape {
 	}
 	public Line(Color c, List<Point> linePoints) {
 		super();
-		this.c = c;
+		this.color = c;
 		this.points = linePoints;
 	}
 	public Line(List<Point> linePoints) {
@@ -22,11 +22,13 @@ public class Line extends Shape {
 	
 	
 	/* Getters & Setters */
-	public Color getC() {
-		return c;
+	@Override
+	public Color getColor() {
+		return color;
 	}
-	public void setC(Color c) {
-		this.c = c;
+	@Override
+	public void setColor(Color color) {
+		this.color = color;
 	}
 	@Override
 	public List<Point> getPoints() {
@@ -41,7 +43,7 @@ public class Line extends Shape {
 	/* Draw*/
 	@Override
 	public void draw(){
-		main.pane.drawLine(c, points);
+		main.pane.drawLine(color, points);
 	}
 
 	@Override

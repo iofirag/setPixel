@@ -4,7 +4,7 @@ import java.util.List;
 
 
 public class Poligon extends Shape {
-	Color c=Color.BLACK;
+	Color color=Color.BLACK;
 	List<Point> points;
 	int poligon_vertex;
 	
@@ -20,13 +20,21 @@ public class Poligon extends Shape {
 	}
 	public Poligon(Color c, List<Point> polygonPoints, int poligon_vertex) {
 		super();
-		this.c = c;
+		this.color = c;
 		this.points = polygonPoints;
 		this.poligon_vertex = poligon_vertex;
 		
 	}
 	
 	/* Getters & Setters */
+	@Override
+	public Color getColor() {
+		return color;
+	}
+	@Override
+	public void setColor(Color color) {
+		this.color = color;
+	}
 	@Override
 	public List<Point> getPoints() {
 		return points;
@@ -40,19 +48,13 @@ public class Poligon extends Shape {
 	}
 	public void setPoligon_vertex(int poligon_vertex) {
 		this.poligon_vertex = poligon_vertex;
-	}
-	public Color getC() {
-		return c;
-	}
-	public void setC(Color c) {
-		this.c = c;
 	}	
 	
 	
 	/* Draw*/
 	@Override
 	public void draw(){
-		main.pane.regularPolygon(c, points, poligon_vertex);
+		main.pane.regularPolygon(color, points, poligon_vertex);
 		System.out.println(this.toString());
 	}
 	
