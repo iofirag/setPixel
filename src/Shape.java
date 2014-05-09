@@ -1,10 +1,19 @@
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class Shape {
 	
+	public Shape(){
+		
+	}
+	public Shape(Shape s){
+		List<Point> p = new ArrayList<>(s.getPoints()) ;
+		this.setPoints(p);
+		this.setColor( s.getColor() );
+	}
 	
 	public Color getColor() {
 		return null;

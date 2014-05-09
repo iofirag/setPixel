@@ -36,6 +36,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
 
+import Jama.Matrix;
+
 
 public class main {
 	// Window size
@@ -48,7 +50,7 @@ public class main {
    
     //History object draw
 	static List<Shape> shapeList=new ArrayList<>();
-	static int zoom=100;	// 100%
+	static double zoom=1;	// 100%
 	// Mouse variables
 	static Point pointPressed =null;
 	static Point pointRelease =null;
@@ -185,16 +187,15 @@ public class main {
 								psikCntr++;
 								switch (psikCntr){
 								case 1:	//x0 point
+								case 3:
 									numBuff_x = Integer.parseInt(buff_string.toString());
 									break;
 								case 2:	//y0 point
+								case 4:
 									numBuff_y = Integer.parseInt(buff_string.toString());
 									pointsBuff.add(new Point(numBuff_x, numBuff_y));
 									break;
-								case 3:	//Radius
-									radius = Integer.parseInt(buff_string.toString());
-									break;
-								case 4:	//Color
+								case 5:	//Color
 									try {
 									    Field field = Class.forName("java.awt.Color").getField(buff_string.toString());
 									    color = (Color)field.get(null);
@@ -208,7 +209,7 @@ public class main {
 								buff_string.append(c);	//build the number
 							}
 						}
-						ob = new Circle(color, pointsBuff, radius);	//create instance
+						ob = new Circle(color, pointsBuff);	//create instance
 						shapeList.add(ob);					//add to list
 						psikCntr=0;							//init
 						break;
@@ -343,13 +344,6 @@ public class main {
            unDo_menu.addActionListener(new ActionListener() {
    			@Override
    			public void actionPerformed(ActionEvent e) {
-//   				if (shapeList.size()>0){
-//   					pane.fillCanvas(Color.white);
-//   					shapeList.remove(shapeList.size()-1);
-//   					for (Shape s : shapeList){
-//   						s.draw();
-//   					}
-//   				}
    				if (shapeList.size()>0){
    					Shape s = shapeList.get(shapeList.size()-1);
    					s.setColor(Color.WHITE);
@@ -363,10 +357,18 @@ public class main {
            clearScreen_menu.addActionListener(new ActionListener() {
    			@Override
    			public void actionPerformed(ActionEvent e) {
-
+   				// Way A
+//   				if (shapeList.size()>0){
+//					for (Shape s : shapeList){
+//						s.setColor(Color.WHITE);
+//						s.draw();
+//					}
+//				}
+   				
+   				// Way B
    				pane.fillCanvas(Color.white);
    				shapeList.clear();
-   				System.out.println( shapeList.toString() );
+   				//System.out.println( shapeList.toString() );
    			}
    		});
            editMenu.add(unDo_menu);
@@ -507,20 +509,113 @@ public class main {
 				itemChecked = 7;
 			}
 		});
-        JMenuItem transMirror = new JMenuItem("Mirror");	//שיקוף
-        //transMove.setMnemonic(KeyEvent.VK_F1);
-        transMirror.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				itemChecked = 8;
-			}
-		});
+        JMenu transMirror = new JMenu("Mirror");	//שיקוף
+	        JMenuItem transMirrorX = new JMenuItem("Mirror X");
+	        transMirrorX.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					itemChecked = 8;
+					
+					//clean the canvas 
+					pane.fillCanvas(Color.WHITE);
+					
+					//find center of img
+					Point centerImg = getImageCenter();
+					
+					for (Shape s : shapeList){
+						for (int i=0; i<s.getPoints().size(); i++){
+							// Matrix A
+							double[][] mirrorXvalues = {{s.getPoints().get(i).x , s.getPoints().get(i).y, 1 }};
+							Matrix mirrorX = new Matrix(mirrorXvalues);
+							// Matrix B
+							double[][] mirrorXMatrix = {{1,0,0},{0,-1,0},{centerImg.x*(1-1),centerImg.y*(1-(-1)),1}};
+							Matrix mirrorXMatrix2 = new Matrix(mirrorXMatrix);
+							// Matrix A * Matrix B
+							Matrix mirrorXresult = mirrorX.times(mirrorXMatrix2);
+							System.out.println(mirrorXresult.toString());
+							
+							// Set new points for object
+							s.getPoints().get(i).x = (int) mirrorXresult.get(0,0);
+							s.getPoints().get(i).y = (int) mirrorXresult.get(0,1);
+						}
+						s.draw();
+					}
+				}
+			});
+	        JMenuItem transMirrorY = new JMenuItem("Mirror Y");
+	        transMirrorY.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					itemChecked = 9;
+					System.out.println("mirror Y");
+					//clean the canvas 
+					pane.fillCanvas(Color.WHITE);
+					
+					//find center of img
+					Point centerImg = getImageCenter();
+					
+					for (Shape s : shapeList){
+						for (int i=0; i<s.getPoints().size(); i++){
+							// Matrix A
+							double[][] mirrorYvalues = {{s.getPoints().get(i).x , s.getPoints().get(i).y, 1 }};
+							Matrix mirrorY = new Matrix(mirrorYvalues);
+							// Matrix B
+							double[][] mirrorYMatrix = {{-1,0,0},{0,1,0},{centerImg.x*(1-(-1)),centerImg.y*(1-(1)),1}};
+							Matrix mirrorYMatrix2 = new Matrix(mirrorYMatrix);
+							// Matrix A * Matrix B
+							Matrix mirrorYresult = mirrorY.times(mirrorYMatrix2);
+							System.out.println(mirrorYresult.toString());
+							
+							// Set new points for object
+							s.getPoints().get(i).x = (int) mirrorYresult.get(0,0);
+							s.getPoints().get(i).y = (int) mirrorYresult.get(0,1);
+						}
+						s.draw();
+					}
+				}
+			});
+	        JMenuItem transMirrorXY = new JMenuItem("Mirror XY");
+	        transMirrorXY.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					itemChecked = 10;
+					
+					System.out.println("mirror XY");
+					//clean the canvas 
+					pane.fillCanvas(Color.WHITE);
+					
+					//find center of img
+					Point centerImg = getImageCenter();
+					
+					for (Shape s : shapeList){
+						for (int i=0; i<s.getPoints().size(); i++){
+							// Matrix A
+							double[][] mirrorYvalues = {{s.getPoints().get(i).x , s.getPoints().get(i).y, 1 }};
+							Matrix mirrorXY = new Matrix(mirrorYvalues);
+							// Matrix B
+							double[][] mirrorXYMatrix = {{-1,0,0},{0,-1,0},{centerImg.x*(1-(-1)),centerImg.y*(1-(-1)),1}};
+							Matrix mirrorYMatrix2 = new Matrix(mirrorXYMatrix);
+							// Matrix A * Matrix B
+							Matrix mirrorXYresult = mirrorXY.times(mirrorYMatrix2);
+							System.out.println(mirrorXYresult.toString());
+							
+							// Set new points for object
+							s.getPoints().get(i).x = (int) mirrorXYresult.get(0,0);
+							s.getPoints().get(i).y = (int) mirrorXYresult.get(0,1);
+						}
+						s.draw();
+					}
+				}
+			});
+	        transMirror.add(transMirrorX);
+	        transMirror.add(transMirrorY);
+	        transMirror.add(transMirrorXY);
         JMenuItem transShearing = new JMenuItem("Shearing");				//גזירה
         //transMove.setMnemonic(KeyEvent.VK_F1);
         transShearing.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				itemChecked = 9;
+				itemChecked = 11;
 			}
 		});
         transformsMenu.add(transTranslation);
@@ -574,31 +669,104 @@ public class main {
 			
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
+				System.out.println("wheel	(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
 				System.out.println("mouseWheelMoved");
 				
 				switch (itemChecked){
 				case 6:		// Scaling
-					Shape snew=new Shape();
-					int sx = 1;
-					int sy = 1;
 					if (e.getWheelRotation()>0 ){
 						System.out.println("mouseWheelMoved UP");	//zoom-out
-						if (zoom>1){	//zoom=1 is minimal
-							zoom--;
-						}
+						zoom=0.9;
 					}else{
 						System.out.println("mouseWheelMoved DOWN");	//zoom-in
-						zoom++;
+						zoom=1.1;
 					}
+					
+					//clean the canvas 
+					pane.fillCanvas(Color.WHITE);
+					
+					//find center of img
+					Point centerImg = getImageCenter();
+					
 					System.out.println("zoom= "+zoom);
-					pane.fillCanvas(Color.white);
 					for (Shape s : shapeList){
 						for (int i=0; i<s.getPoints().size(); i++){
-							s.getPoints().get(i).x =  sx* s.getPoints().get(i).x;
-							s.getPoints().get(i).y =  sy* s.getPoints().get(i).y;
+							
+							// init vector with point parameter
+							int [] matric = {(int) s.getPoints().get(i).x,
+											(int) s.getPoints().get(i).y,
+												1} ;
+							
+							// Mult matric: 		[x*zoomX +  y*0 +  1*centerX(1-zoomX)	|   ,x*0 + y*zoomY +  1*centerY(1-zoomY)	| ,x*0 + y*0 + 1*1]
+							matric[0]= (int) (matric[0]*zoom + matric[1]*0 + 1*centerImg.x*(1-zoom));	//x*zoomX    +   y*0   +  1*centerX(1-zoomX)
+							matric[1]= (int) (matric[0]*0 + matric[1]*zoom + 1*centerImg.y*(1-zoom));	//x*0 + y*zoomY +  1*centerY(1-zoomY)
+							matric[2]= matric[0]*0 + matric[1]*0 + 1*1;									//x*0 + y*0 + 1*1
+							
+							//set the new point
+							s.getPoints().set(i, new Point(matric[0],matric[1]));
 						}
 						s.draw();
 					}
+					
+					
+//					int prevYcord = pointPressed.y;
+//					if (lastDrag_y > prevYcord ){
+//						double scalingX=1.01;
+//						double scalingY=1.01;
+//						//first ,clear the canvas 
+//						pane.fillCanvas(Color.white);
+//						
+//						for (int i=0; i<shapeList.size(); i++){
+//							//Change current shape cordinations
+//							for ( int j=0; j < shapeList.get(i).getPoints().size(); j++ ){
+//								double[][] originalXYvalues = { { shapeList.get(i).getPoints().get(j).x , shapeList.get(i).getPoints().get(j).y , 1 }, { 0 , 0 ,0 } , { 0 , 0 ,0 }};
+//								Matrix originalXY = new Matrix(originalXYvalues);
+//								double[][] scalingMatrix = { { scalingX , 0 , 0 } , { 0 , scalingY , 0 } , { temp.x , temp.y , 0} }; // last row isnt correct
+//								Matrix scaling = new Matrix(scalingMatrix);
+//								Matrix xyPrime = originalXY.times(scaling);
+//								shapeList.get(i).getPoints().get(j).x = (int) xyPrime.get(0, 0);
+//								shapeList.get(i).getPoints().get(j).y = (int) xyPrime.get(0, 1);
+//								if(shapeList.get(i).getClass().getName().equals("Circle")){
+//									
+//								}
+//								
+//							}
+//							//Draw current shape
+//							shapeList.get(i).draw();
+//							pane.repaint();
+//						}	
+//						 prevYcord = lastDrag_y;
+//					}
+//					
+//						if (lastDrag_y < prevYcord ){
+//							double scalingX=0.99;
+//							double scalingY=0.99;
+//							//first ,clear the canvas 
+//							pane.fillCanvas(Color.white);
+//							
+//							for (int i=0; i<shapeList.size(); i++){
+//								//Change current shape cordinations
+//								for ( int j=0; j < shapeList.get(i).getPoints().size(); j++ ){
+//									double[][] originalXyValues = { { shapeList.get(i).getPoints().get(j).x , shapeList.get(i).getPoints().get(j).y }, { 0 , 0 } };
+//									Matrix originalXY = new Matrix(originalXyValues);
+//									double[][] scalingMatrix = { { scalingX , 0 } , { 0 , scalingY } };
+//									Matrix scaling = new Matrix(scalingMatrix);
+//									Matrix xyPrime = originalXY.times(scaling);
+//									shapeList.get(i).getPoints().get(j).x = (int) xyPrime.get(0, 0);
+//									shapeList.get(i).getPoints().get(j).y = (int) xyPrime.get(0, 1);
+//									
+//									//int[] temp = {shapeList.get(i).getPoints().get(j).x, shapeList.get(i).getPoints().get(j).y, 1};
+//									//temp*
+//		
+//								}
+//								//Draw current shape
+//								shapeList.get(i).draw();
+//								pane.repaint();
+//							}
+//							
+//							 prevYcord = lastDrag_y;
+//						
+//					}
 					break;
 				}
 			}
@@ -726,6 +894,36 @@ public class main {
 		});
         
     }
+	public static Point getImageCenter(){
+		
+		Point p = null;
+		int maxX=-1,maxY=-1,minX=WIDTH,minY=HEIGHT;
+		Point[][] pix;
+		for (int x=0; x<pane.WIDTH; x++){
+			for (int y=0; y<pane.HEIGHT; y++)
+			{
+				if (pane.getCanvas().getRGB(x, y) != Color.WHITE.getRGB()){
+					Point temp = new Point(x,y);
+					// min
+					if (temp.getX()<minX){			//x
+						minX=(int) temp.getX();
+					}
+					if (temp.getY()<minY){			//y
+						minY=(int) temp.getY();
+					}
+					
+					// MAX
+					if (temp.getX()>maxX){			//X
+						maxX=(int) temp.getX();
+					}
+					if (temp.getY()>maxY){			//Y
+						maxY=(int) temp.getY();
+					}
+				}
+			}
+		}
+		return new Point( (maxX+minX)/2 , (maxY+minY)/2 );
+	}
 	
 	public static String promptForFile( Component parent ){
 	    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
