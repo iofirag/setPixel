@@ -578,27 +578,8 @@ public class main {
 				
 				switch (itemChecked){
 				case 6:		// Scaling
-					Shape snew=new Shape();
-					int sx = 1;
-					int sy = 1;
-					if (e.getWheelRotation()>0 ){
-						System.out.println("mouseWheelMoved UP");	//zoom-out
-						if (zoom>1){	//zoom=1 is minimal
-							zoom--;
-						}
-					}else{
-						System.out.println("mouseWheelMoved DOWN");	//zoom-in
-						zoom++;
-					}
-					System.out.println("zoom= "+zoom);
-					pane.fillCanvas(Color.white);
-					for (Shape s : shapeList){
-						for (int i=0; i<s.getPoints().size(); i++){
-							s.getPoints().get(i).x =  sx* s.getPoints().get(i).x;
-							s.getPoints().get(i).y =  sy* s.getPoints().get(i).y;
-						}
-						s.draw();
-					}
+					
+					
 					break;
 				}
 			}
@@ -726,6 +707,38 @@ public class main {
 		});
         
     }
+	
+	public static Point getImageCenter(){
+		
+		Point p = null;
+		int maxX=-1,maxY=-1,minX=WIDTH,minY=HEIGHT;
+		Point[][] pix;
+		for (int i=0; i<HEIGHT; i++){
+			for (int j=0; j<WIDTH; j++)
+			{
+				if (pane.getCanvas().getRGB(i, j) != Color.WHITE.getRGB()){
+					Point temp = new Point(i,j);
+					// min
+					if (temp.getX()<minX){			//x
+						minX=(int) temp.getX();
+					}
+					if (temp.getY()<minY){			//y
+						minY=(int) temp.getY();
+					}
+					
+					// MAX
+					if (temp.getX()>maxX){			//X
+						maxX=(int) temp.getX();
+					}
+					if (temp.getY()>maxY){			//Y
+						maxY=(int) temp.getY();
+					}
+				}
+			}
+		}
+		
+		return new Point( (maxX+minX)/2 , (maxY+minY)/2 );
+	}
 	
 	public static String promptForFile( Component parent ){
 	    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
