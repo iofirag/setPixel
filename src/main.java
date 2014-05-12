@@ -733,18 +733,28 @@ public class main {
 		transMirror.add(transMirrorX);
 		transMirror.add(transMirrorY);
 		transMirror.add(transMirrorXY);
-		JMenuItem transShearing = new JMenuItem("Shearing"); // גזירה
-		transShearing.addActionListener(new ActionListener() {
+		
+		JMenu transShearing = new JMenu("Shearing"); // גזירה
+		JMenuItem transShearingX = new JMenuItem("Shearing X");
+		transShearingX.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 12;
-				System.out.println( (int)Color.WHITE.getRGB() );
-				System.out.println( (int)Color.BLACK.getRGB() );
-				System.out.println( Color.blue.getRGB() );
-				System.out.println( Color.red.getRGB() );
-				System.out.println( (int)Color.red.getRGB() );
 			}
 		});
+		JMenuItem transShearingY = new JMenuItem("Shearing Y");
+		transShearingX.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				itemChecked = 13;
+			}
+		});
+		transShearing.add(transShearingX);
+		transShearing.add(transShearingY);
+		
+		// ************************************************
+		
+		
 		transformsMenu.add(transTranslation);
 		transformsMenu.add(transScaling);
 		transformsMenu.add(transRotation);
@@ -853,6 +863,7 @@ public class main {
 					
 					// find center of img
 					Point centerImg = getImageCenter();
+							//centerImg = currMousePoint;
 					System.out.println("centerImg="+centerImg.x+", "+centerImg.y);
 					
 					double teta = 0;
@@ -903,7 +914,6 @@ public class main {
 					pane.fillCanvas(Color.WHITE);
 					
 					double a = 0;
-					double b = 0;
 					for (Shape s : shapeList) {
 						for (int i = 0; i < s.getPoints().size(); i++) {
 							// Matrix A
@@ -934,6 +944,43 @@ public class main {
 						}
 						s.draw();
 					}
+					break;
+				case 13:	//shearing
+					// clean the canvas
+					pane.fillCanvas(Color.WHITE);
+					
+					double b = 0;
+					for (Shape s : shapeList) {
+						for (int i = 0; i < s.getPoints().size(); i++) {
+							// Matrix A
+							double[][] objectValues = { {
+									s.getPoints().get(i).x,
+									s.getPoints().get(i).y, 
+									1 } };
+							Matrix object = new Matrix(objectValues);
+							
+							
+							if (e.getWheelRotation() > 0) {
+								System.out.println("mouseWheelMoved UP"); // Rotation Right
+								System.out.println("Rotation Right");
+								b = 0.1;
+							} else {
+								System.out.println("mouseWheelMoved DOWN"); // Rotation Left
+								b= -0.1;
+							}
+							
+							
+							double sheering[][] ={{1,b,0},{0,1,0},{0,0,1}};
+							Matrix sheeringMatrix = new Matrix(sheering);
+							Matrix result = object.times(sheeringMatrix);
+							
+							// Set new points for object
+							s.getPoints().get(i).x = (int) result.get(0,0);
+							s.getPoints().get(i).y = (int) result.get(0,1);
+						}
+						s.draw();
+					}
+					break;
 				}
 			}
 		});
