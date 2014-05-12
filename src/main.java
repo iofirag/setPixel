@@ -36,76 +36,76 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
 
+import Jama.Matrix;
 
 public class main {
 	// Window size
-	static final int WIDTH = 900;	//x
-    static final int HEIGHT = 500;	//y
-    
-    
-    //panel
-    static myJPanel pane;
-   
-    //History object draw
-	static List<Shape> shapeList=new ArrayList<>();
-	static int zoom=100;	// 100%
+	static final int WIDTH = 900; // x
+	static final int HEIGHT = 500; // y
+
+	// panel
+	static myJPanel pane;
+
+	// History object draw
+	static List<Shape> shapeList = new ArrayList<>();
+	static double zoom = 1; // 100%
 	// Mouse variables
-	static Point pointPressed =null;
-	static Point pointRelease =null;
-	static int lastDrag_x=0;
-	static int lastDrag_y=0;
-	static boolean MouseExitFromWindow=false;
-	
+	static Point pointPressed = null;
+	static Point pointRelease = null;
+	static int lastDrag_x = 0;
+	static int lastDrag_y = 0;
+	static boolean MouseExitFromWindow = false;
+
 	// item & color user choose
-	static int itemChecked = 1;		//	Objects:
-									//		1= Line		(default)   
-									//		2= Circle   
-									//		3= Polygon	
-									//		4= Bezier curve
-									//  
-									//	Transforms:
-									//		5= Shift
-									//		6= Scale   
-									//		7= Rotating	
-									//		8= Mirroring
-									//		9= Cut
+	static int itemChecked = 1; // Objects:
+								// 1= Line (default)
+								// 2= Circle
+								// 3= Polygon
+								// 4= Bezier curve
+								//
+								// Transforms:
+								// 5= Shift
+								// 6= Scale
+								// 7= Rotating
+								// 8= Mirroring
+								// 9= Cut
 	static Color color = Color.black;
-		  
-	//bezier variables
-	static List<Point> bezierPoints=new ArrayList<>();
-		
-	//poligon variable
-	static int poligon_vertex =0;
-	
+
+	// bezier variables
+	static List<Point> bezierPoints = new ArrayList<>();
+
+	// poligon variable
+	static int poligon_vertex = 0;
+
 	public static void main(String[] args) {
-		//see all the properties in java
+		// see all the properties in java
 		System.getProperties().list(System.out);
-		
-        /* java window - the container managed the frame */
-        JFrame frame = new JFrame("Direct draw demo");       
-        
-        /* specific frame */
-        pane = new myJPanel(WIDTH, HEIGHT);
-        
-        //******************************************************************
 
-        frame.add(pane);
-        // to show at least the panel data
-        frame.pack();
-        /* Resizability */
-        frame.setResizable(true);     
-        /* close all app in close button */
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		/* java window - the container managed the frame */
+		JFrame frame = new JFrame("Direct draw demo");
 
-      	//Create the menu bar.
-        JMenuBar menuBar = new JMenuBar();
-        
-        //File Menu
-        JMenu fileMenu = new JMenu ("File");
-        fileMenu.setMnemonic(KeyEvent.VK_F);
-        JMenuItem openFile = new JMenuItem("Open file..");
-        //objectItem_line.setMnemonic(KeyEvent.VK_F1);
-        openFile.addActionListener(new ActionListener() {
+		/* specific frame */
+		pane = new myJPanel(WIDTH, HEIGHT);
+
+		// ******************************************************************
+
+		frame.add(pane);
+		// to show at least the panel data
+		frame.pack();
+		/* Resizability */
+		frame.setResizable(true);
+		/* close all app in close button */
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		// Create the menu bar.
+		JMenuBar menuBar = new JMenuBar();
+
+		// File Menu
+		JMenu fileMenu = new JMenu("File");
+		fileMenu.setMnemonic(KeyEvent.VK_F);
+		JMenuItem openFile = new JMenuItem("Open file..");
+		// objectItem_line.setMnemonic(KeyEvent.VK_F1);
+		openFile.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Component c = null;
@@ -113,181 +113,213 @@ public class main {
 				Path path = Paths.get(pathString);
 				try {
 					pane.fillCanvas(Color.white);
-					List <String>lines = null;
-					//parse can open .TXT format that saved in type UTF-8
+					List<String> lines = null;
+					// parse can open .TXT format that saved in type UTF-8
 					lines = Files.readAllLines(path, StandardCharsets.US_ASCII);
-					parseLines_ToObjects(lines);	//save all objects in shapeList
-					
-					for (Shape s :shapeList){
+					parseLines_ToObjects(lines); // save all objects in
+													// shapeList
+
+					for (Shape s : shapeList) {
 						s.draw();
 					}
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 			}
+
 			private void parseLines_ToObjects(List<String> lines) {
-				//run on every line in file
-				for (String line : lines){
-					String numOfObject_string = line.substring(0, 1);  	//take the first character
-					line = line.substring(2);			//delete from line the [first and second] character at start of the line
-					
-					int objectNumber = Integer.parseInt(numOfObject_string);	//identify wich object is it
-					char[] charArray = line.toCharArray();	//make from line char array[]
-					
+				// run on every line in file
+				for (String line : lines) {
+					String numOfObject_string = line.substring(0, 1); // take
+																		// the
+																		// first
+																		// character
+					line = line.substring(2); // delete from line the [first and
+												// second] character at start of
+												// the line
+
+					int objectNumber = Integer.parseInt(numOfObject_string); // identify
+																				// wich
+																				// object
+																				// is
+																				// it
+					char[] charArray = line.toCharArray(); // make from line
+															// char array[]
+
 					Shape ob;
-					int psikCntr=0;
-					StringBuilder buff_string=new StringBuilder();
-					int numBuff_x=-999999;	//still not initialize
-					int numBuff_y=-999999;	//still not initialize
-					
+					int psikCntr = 0;
+					StringBuilder buff_string = new StringBuilder();
+					int numBuff_x = -999999; // still not initialize
+					int numBuff_y = -999999; // still not initialize
+
 					Color color = null;
-					List<Point> pointsBuff=new ArrayList<>();
-					
-					switch (objectNumber){
+					List<Point> pointsBuff = new ArrayList<>();
+
+					switch (objectNumber) {
 					// Line
-					case 1: 
-						for (char c :line.toCharArray()){
-							if(c == ',' || c == '.'){
+					case 1:
+						for (char c : line.toCharArray()) {
+							if (c == ',' || c == '.') {
 								psikCntr++;
-								switch (psikCntr){
-								case 1:	//x0 point
-								case 3:	//x1 point
-									numBuff_x = Integer.parseInt(buff_string.toString());
+								switch (psikCntr) {
+								case 1: // x0 point
+								case 3: // x1 point
+									numBuff_x = Integer.parseInt(buff_string
+											.toString());
 									break;
-								case 2:	//y0 point
-								case 4:	//y1 point
-									numBuff_y = Integer.parseInt(buff_string.toString());
-									pointsBuff.add(new Point(numBuff_x, numBuff_y));
+								case 2: // y0 point
+								case 4: // y1 point
+									numBuff_y = Integer.parseInt(buff_string
+											.toString());
+									pointsBuff.add(new Point(numBuff_x,
+											numBuff_y));
 									break;
-								case 5:	//color
+								case 5: // color
 									try {
-									    Field field = Class.forName("java.awt.Color").getField(buff_string.toString());
-									    color = (Color)field.get(null);
+										Field field = Class.forName(
+												"java.awt.Color").getField(
+												buff_string.toString());
+										color = (Color) field.get(null);
 									} catch (Exception e) {
-									    color = null; // Not defined
+										color = null; // Not defined
 									}
 									break;
 								}
-								buff_string=new StringBuilder();	//init
-							}else{
-								buff_string.append(c);	//build the number
+								buff_string = new StringBuilder(); // init
+							} else {
+								buff_string.append(c); // build the number
 							}
 						}
-						ob = new Line(color, pointsBuff);	//create instance
-						shapeList.add(ob);					//add to list
-						psikCntr=0;							//init
+						ob = new Line(color, pointsBuff); // create instance
+						shapeList.add(ob); // add to list
+						psikCntr = 0; // init
 						break;
 					// Circle
-					case 2:	
+					case 2:
 						int radius = 0;
-						for (char c :line.toCharArray()){
-							if(c == ',' || c == '.'){
+						for (char c : line.toCharArray()) {
+							if (c == ',' || c == '.') {
 								psikCntr++;
-								switch (psikCntr){
-								case 1:	//x0 point
-									numBuff_x = Integer.parseInt(buff_string.toString());
+								switch (psikCntr) {
+								case 1: // x0 point
+								case 3:
+									numBuff_x = Integer.parseInt(buff_string
+											.toString());
 									break;
-								case 2:	//y0 point
-									numBuff_y = Integer.parseInt(buff_string.toString());
-									pointsBuff.add(new Point(numBuff_x, numBuff_y));
+								case 2: // y0 point
+								case 4:
+									numBuff_y = Integer.parseInt(buff_string
+											.toString());
+									pointsBuff.add(new Point(numBuff_x,
+											numBuff_y));
 									break;
-								case 3:	//Radius
-									radius = Integer.parseInt(buff_string.toString());
-									break;
-								case 4:	//Color
+								case 5: // Color
 									try {
-									    Field field = Class.forName("java.awt.Color").getField(buff_string.toString());
-									    color = (Color)field.get(null);
+										Field field = Class.forName(
+												"java.awt.Color").getField(
+												buff_string.toString());
+										color = (Color) field.get(null);
 									} catch (Exception e) {
-									    color = null; // Not defined
+										color = null; // Not defined
 									}
 									break;
 								}
-								buff_string=new StringBuilder();	//init
-							}else{
-								buff_string.append(c);	//build the number
+								buff_string = new StringBuilder(); // init
+							} else {
+								buff_string.append(c); // build the number
 							}
 						}
-						ob = new Circle(color, pointsBuff, radius);	//create instance
-						shapeList.add(ob);					//add to list
-						psikCntr=0;							//init
+						ob = new Circle(color, pointsBuff); // create instance
+						shapeList.add(ob); // add to list
+						psikCntr = 0; // init
 						break;
-					//Poligon
+					// Poligon
 					case 3:
 						int vertex = 0;
-						for (char c :line.toCharArray()){
-							if(c == ',' || c == '.'){
+						for (char c : line.toCharArray()) {
+							if (c == ',' || c == '.') {
 								psikCntr++;
-								switch (psikCntr){
-								case 1:	//x0 point
-								case 3:	//x1 point
-									numBuff_x = Integer.parseInt(buff_string.toString());
+								switch (psikCntr) {
+								case 1: // x0 point
+								case 3: // x1 point
+									numBuff_x = Integer.parseInt(buff_string
+											.toString());
 									break;
-								case 2:	//y0 point
-								case 4:	//y1 point
-									numBuff_y = Integer.parseInt(buff_string.toString());
-									pointsBuff.add(new Point(numBuff_x, numBuff_y));
+								case 2: // y0 point
+								case 4: // y1 point
+									numBuff_y = Integer.parseInt(buff_string
+											.toString());
+									pointsBuff.add(new Point(numBuff_x,
+											numBuff_y));
 									break;
-								case 5:	//color
-									vertex = Integer.parseInt(buff_string.toString());
+								case 5: // color
+									vertex = Integer.parseInt(buff_string
+											.toString());
 									break;
-								case 6:	//color
+								case 6: // color
 									try {
-									    Field field = Class.forName("java.awt.Color").getField(buff_string.toString());
-									    color = (Color)field.get(null);
+										Field field = Class.forName(
+												"java.awt.Color").getField(
+												buff_string.toString());
+										color = (Color) field.get(null);
 									} catch (Exception e) {
-									    color = null; // Not defined
+										color = null; // Not defined
 									}
 									break;
 								}
-								buff_string=new StringBuilder();	//init
-							}else{
-								buff_string.append(c);	//build the number
+								buff_string = new StringBuilder(); // init
+							} else {
+								buff_string.append(c); // build the number
 							}
 						}
-						ob = new Poligon(color, pointsBuff, vertex);	//create instance
-						shapeList.add(ob);					//add to list
-						psikCntr=0;							//init
+						ob = new Poligon(color, pointsBuff, vertex); // create
+																		// instance
+						shapeList.add(ob); // add to list
+						psikCntr = 0; // init
 						break;
-					//Bezier
+					// Bezier
 					case 4:
-						for (char c :line.toCharArray()){
-							if(c == ',' || c == '.'){
+						for (char c : line.toCharArray()) {
+							if (c == ',' || c == '.') {
 								psikCntr++;
-								switch (psikCntr){
-								case 1:	//A.x point
-								case 3:	//B.x point
-								case 5:	//C.x point
-								case 7:	//D.x point
-									numBuff_x = Integer.parseInt(buff_string.toString());
+								switch (psikCntr) {
+								case 1: // A.x point
+								case 3: // B.x point
+								case 5: // C.x point
+								case 7: // D.x point
+									numBuff_x = Integer.parseInt(buff_string
+											.toString());
 									break;
-								case 2:	//A.y point
-								case 4:	//B.y point
-								case 6:	//C.y point
-								case 8:	//D.y point
-									numBuff_y = Integer.parseInt(buff_string.toString());
-									pointsBuff.add(new Point(numBuff_x, numBuff_y));
+								case 2: // A.y point
+								case 4: // B.y point
+								case 6: // C.y point
+								case 8: // D.y point
+									numBuff_y = Integer.parseInt(buff_string
+											.toString());
+									pointsBuff.add(new Point(numBuff_x,
+											numBuff_y));
 									break;
-								case 9:	//color
+								case 9: // color
 									try {
-									    Field field = Class.forName("java.awt.Color").getField(buff_string.toString());
-									    color = (Color)field.get(null);
+										Field field = Class.forName(
+												"java.awt.Color").getField(
+												buff_string.toString());
+										color = (Color) field.get(null);
 									} catch (Exception e) {
-									    color = null; // Not defined
+										color = null; // Not defined
 									}
 									break;
 								}
-								buff_string=new StringBuilder();	//init
-							}else{
-								buff_string.append(c);	//build the number
+								buff_string = new StringBuilder(); // init
+							} else {
+								buff_string.append(c); // build the number
 							}
 						}
-						ob = new Bezier(color, pointsBuff);	//create instance
-						shapeList.add(ob);					//add to list
-						psikCntr=0;	
+						ob = new Bezier(color, pointsBuff); // create instance
+						shapeList.add(ob); // add to list
+						psikCntr = 0;
 						break;
-						
-						
+
 					default:
 						System.out.println("line error.");
 						break;
@@ -295,9 +327,9 @@ public class main {
 				}
 			}
 		});
-        JMenuItem saveFile = new JMenuItem("Save file");
-        saveFile.addActionListener(new ActionListener() {
-			
+		JMenuItem saveFile = new JMenuItem("Save file");
+		saveFile.addActionListener(new ActionListener() {
+
 			@Override
 			public void actionPerformed(ActionEvent ev) {
 				File file;
@@ -305,22 +337,23 @@ public class main {
 				BufferedWriter bw = null;
 				try {
 					// Open the file
-					file = new File(System.getProperty("user.dir")+"/"+System.currentTimeMillis()+".txt");
+					file = new File(System.getProperty("user.dir") + "/"
+							+ System.currentTimeMillis() + ".txt");
 					// if file doesnt exists, then create it
 					if (!file.exists()) {
 						file.createNewFile();
 					}
-					
-					//open streaming
+
+					// open streaming
 					fw = new FileWriter(file.getAbsoluteFile());
 					bw = new BufferedWriter(fw);
-					
-					for (Shape s :shapeList){
-						bw.write(s.toString()+'\n');
+
+					for (Shape s : shapeList) {
+						bw.write(s.toString() + '\n');
 					}
 					bw.close();
 					System.out.println("Done");
-		 
+
 				} catch (IOException e) {
 					e.printStackTrace();
 					try {
@@ -332,421 +365,765 @@ public class main {
 				}
 			}
 		});
-        fileMenu.add(openFile);
-        fileMenu.add(saveFile);
-        
-//************************************************
-        JMenu editMenu = new JMenu ("Edit");
-        editMenu.setMnemonic(KeyEvent.VK_E);
-        	// Clear Screen button
-           JMenuItem unDo_menu = new JMenuItem("Undo");
-           unDo_menu.addActionListener(new ActionListener() {
-   			@Override
-   			public void actionPerformed(ActionEvent e) {
-//   				if (shapeList.size()>0){
-//   					pane.fillCanvas(Color.white);
-//   					shapeList.remove(shapeList.size()-1);
-//   					for (Shape s : shapeList){
-//   						s.draw();
-//   					}
-//   				}
-   				if (shapeList.size()>0){
-   					Shape s = shapeList.get(shapeList.size()-1);
-   					s.setColor(Color.WHITE);
-   					s.draw();
-   					shapeList.remove(shapeList.size()-1);
-   				}
-   			}
-   		});
-           // Clear Screen button
-           JMenuItem clearScreen_menu = new JMenuItem("Clear Screen");
-           clearScreen_menu.addActionListener(new ActionListener() {
-   			@Override
-   			public void actionPerformed(ActionEvent e) {
+		fileMenu.add(openFile);
+		fileMenu.add(saveFile);
 
-   				pane.fillCanvas(Color.white);
-   				shapeList.clear();
-   				System.out.println( shapeList.toString() );
-   			}
-   		});
-           editMenu.add(unDo_menu);
-           editMenu.add(clearScreen_menu);
-           
- //************************************************
-        // Objects Menu
-        JMenu objectsMenu = new JMenu ("Objects");
-        objectsMenu.setMnemonic(KeyEvent.VK_O);
-        JMenuItem objectItem_line = new JMenuItem("Line");
-        objectItem_line.setMnemonic(KeyEvent.VK_F1);
-        objectItem_line.addActionListener(new ActionListener() {
+		// ************************************************
+		JMenu editMenu = new JMenu("Edit");
+		editMenu.setMnemonic(KeyEvent.VK_E);
+		// Clear Screen button
+		JMenuItem unDo_menu = new JMenuItem("Undo");
+		unDo_menu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				itemChecked=1;
+				if (shapeList.size() > 0) {
+					Shape s = shapeList.get(shapeList.size() - 1);
+					s.setColor(Color.WHITE);
+					s.draw();
+					shapeList.remove(shapeList.size() - 1);
+				}
 			}
 		});
-        JMenuItem objectItem_circle = new JMenuItem("Circle");
-        objectItem_circle.setMnemonic(KeyEvent.VK_F2);
-        objectItem_circle.addActionListener(new ActionListener() {
+		// Clear Screen button
+		JMenuItem clearScreen_menu = new JMenuItem("Clear Screen");
+		clearScreen_menu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				itemChecked=2;
-			}
-		});
-        JMenuItem objectItem_poligon = new JMenuItem("Poligon");
-        objectItem_poligon.setMnemonic(KeyEvent.VK_F3);
-        objectItem_poligon.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				itemChecked=3;
+				// Way A
+				// if (shapeList.size()>0){
+				// for (Shape s : shapeList){
+				// s.setColor(Color.WHITE);
+				// s.draw();
+				// }
+				// }
 
-				//custom title, custom icon
-				String result = JOptionPane.showInputDialog("Enter poligon vertex:");
-				poligon_vertex= Integer.parseInt(result);
+				// Way B
+				pane.fillCanvas(Color.white);
+				shapeList.clear();
+				// System.out.println( shapeList.toString() );
 			}
 		});
-        JMenuItem objectItem_bezier = new JMenuItem("Bezier Curve");
-        objectItem_bezier.addActionListener(new ActionListener() {
+		editMenu.add(unDo_menu);
+		editMenu.add(clearScreen_menu);
+
+		// ************************************************
+		// Objects Menu
+		JMenu objectsMenu = new JMenu("Objects");
+		objectsMenu.setMnemonic(KeyEvent.VK_O);
+		JMenuItem objectItem_line = new JMenuItem("Line");
+		objectItem_line.setMnemonic(KeyEvent.VK_F1);
+		objectItem_line.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				itemChecked=4;
+				itemChecked = 1;
 			}
 		});
-        objectsMenu.add(objectItem_line);
-        objectsMenu.add(objectItem_circle);
-        objectsMenu.add(objectItem_poligon);
-        objectsMenu.add(objectItem_bezier);
-        
-//************************************************
-        
-        // Color Menu
-        JMenu colorMenu = new JMenu("Color");
-        JMenuItem colorMenu_black = new JMenuItem("");
-        colorMenu_black.setPreferredSize(new Dimension(40, 20));
-        colorMenu_black.setBackground(Color.BLACK);
-        colorMenu_black.addActionListener(new ActionListener() {
+		JMenuItem objectItem_circle = new JMenuItem("Circle");
+		objectItem_circle.setMnemonic(KeyEvent.VK_F2);
+		objectItem_circle.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				itemChecked = 2;
+			}
+		});
+		JMenuItem objectItem_poligon = new JMenuItem("Poligon");
+		objectItem_poligon.setMnemonic(KeyEvent.VK_F3);
+		objectItem_poligon.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				itemChecked = 3;
+
+				// custom title, custom icon
+				String result = JOptionPane
+						.showInputDialog("Enter poligon vertex:");
+				poligon_vertex = Integer.parseInt(result);
+			}
+		});
+		JMenuItem objectItem_bezier = new JMenuItem("Bezier Curve");
+		objectItem_bezier.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				itemChecked = 4;
+			}
+		});
+		objectsMenu.add(objectItem_line);
+		objectsMenu.add(objectItem_circle);
+		objectsMenu.add(objectItem_poligon);
+		objectsMenu.add(objectItem_bezier);
+
+		// ************************************************
+
+		// Color Menu
+		JMenu colorMenu = new JMenu("Color");
+		JMenuItem colorMenu_black = new JMenuItem("");
+		colorMenu_black.setPreferredSize(new Dimension(40, 20));
+		colorMenu_black.setBackground(Color.BLACK);
+		colorMenu_black.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				color = Color.BLACK;
 			}
 		});
-        JMenuItem colorMenu_green = new JMenuItem("");
-        colorMenu_green.setPreferredSize(new Dimension(40, 20));
-        colorMenu_green.setBackground(Color.GREEN);
-        colorMenu_green.addActionListener(new ActionListener() {
+		JMenuItem colorMenu_green = new JMenuItem("");
+		colorMenu_green.setPreferredSize(new Dimension(40, 20));
+		colorMenu_green.setBackground(Color.GREEN);
+		colorMenu_green.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				color = Color.GREEN;
 			}
 		});
-        JMenuItem colorMenu_blue = new JMenuItem("");
-        colorMenu_blue.setPreferredSize(new Dimension(40, 20));
-        colorMenu_blue.setBackground(Color.BLUE);
-        colorMenu_blue.addActionListener(new ActionListener() {
+		JMenuItem colorMenu_blue = new JMenuItem("");
+		colorMenu_blue.setPreferredSize(new Dimension(40, 20));
+		colorMenu_blue.setBackground(Color.BLUE);
+		colorMenu_blue.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				color = Color.BLUE;
 			}
 		});
-        JMenuItem colorMenu_white = new JMenuItem("");
-        colorMenu_white.setPreferredSize(new Dimension(40, 20));
-        colorMenu_white.setBackground(Color.WHITE);
-        colorMenu_white.addActionListener(new ActionListener() {
+		JMenuItem colorMenu_white = new JMenuItem("");
+		colorMenu_white.setPreferredSize(new Dimension(40, 20));
+		colorMenu_white.setBackground(Color.WHITE);
+		colorMenu_white.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				color = Color.WHITE;
 			}
 		});
-        JMenuItem colorMenu_yellow = new JMenuItem("");
-        colorMenu_yellow.setPreferredSize(new Dimension(40, 20));
-        colorMenu_yellow.setBackground(Color.YELLOW);
-        colorMenu_yellow.addActionListener(new ActionListener() {
+		JMenuItem colorMenu_yellow = new JMenuItem("");
+		colorMenu_yellow.setPreferredSize(new Dimension(40, 20));
+		colorMenu_yellow.setBackground(Color.YELLOW);
+		colorMenu_yellow.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				color = Color.YELLOW;
 			}
 		});
-        JMenuItem colorMenu_red = new JMenuItem("");
-        colorMenu_red.setPreferredSize(new Dimension(40, 20));
-        colorMenu_red.setBackground(Color.RED);
-        colorMenu_red.addActionListener(new ActionListener() {
+		JMenuItem colorMenu_red = new JMenuItem("");
+		colorMenu_red.setPreferredSize(new Dimension(40, 20));
+		colorMenu_red.setBackground(Color.RED);
+		colorMenu_red.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				color = Color.RED;
 			}
 		});
-        //Build Color menu.
-        colorMenu.add(colorMenu_black);
-        colorMenu.add(colorMenu_red);
-        colorMenu.add(colorMenu_green);
-        colorMenu.add(colorMenu_blue);
-        colorMenu.add(colorMenu_white);
-        colorMenu.add(colorMenu_yellow);
-        
-//************************************************
-        
-        // Transforms
-        JMenu transformsMenu = new JMenu ("Transforms");
-        JMenuItem transTranslation = new JMenuItem("Translation");		//äææä
-        transTranslation.addActionListener(new ActionListener() {
+		JMenuItem colorMenu_cyan = new JMenuItem("");
+		colorMenu_cyan.setPreferredSize(new Dimension(40, 20));
+		colorMenu_cyan.setBackground(Color.CYAN);
+		colorMenu_cyan.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				color = Color.CYAN;
+			}
+		});
+		JMenuItem colorMenu_darkGray = new JMenuItem("");
+		colorMenu_darkGray.setPreferredSize(new Dimension(40, 20));
+		colorMenu_darkGray.setBackground(Color.DARK_GRAY);
+		colorMenu_darkGray.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				color = Color.DARK_GRAY;
+			}
+		});
+		JMenuItem colorMenu_gray = new JMenuItem("");
+		colorMenu_gray.setPreferredSize(new Dimension(40, 20));
+		colorMenu_gray.setBackground(Color.GRAY);
+		colorMenu_gray.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				color = Color.GRAY;
+			}
+		});
+		JMenuItem colorMenu_lightGray = new JMenuItem("");
+		colorMenu_lightGray.setPreferredSize(new Dimension(40, 20));
+		colorMenu_lightGray.setBackground(Color.LIGHT_GRAY);
+		colorMenu_lightGray.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				color = Color.LIGHT_GRAY;
+			}
+		});
+		JMenuItem colorMenu_magenta = new JMenuItem("");
+		colorMenu_magenta.setPreferredSize(new Dimension(40, 20));
+		colorMenu_magenta.setBackground(Color.MAGENTA);
+		colorMenu_magenta.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				color = Color.MAGENTA;
+			}
+		});
+		JMenuItem colorMenu_orange = new JMenuItem("");
+		colorMenu_orange.setPreferredSize(new Dimension(40, 20));
+		colorMenu_orange.setBackground(Color.ORANGE);
+		colorMenu_orange.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				color = Color.ORANGE;
+			}
+		});
+		JMenuItem colorMenu_pink = new JMenuItem("");
+		colorMenu_pink.setPreferredSize(new Dimension(40, 20));
+		colorMenu_pink.setBackground(Color.PINK);
+		colorMenu_pink.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				color = Color.PINK;
+			}
+		});
+		// Build Color menu.
+		colorMenu.add(colorMenu_black);
+		colorMenu.add(colorMenu_green);
+		colorMenu.add(colorMenu_blue);
+		colorMenu.add(colorMenu_white);
+		colorMenu.add(colorMenu_yellow);
+		colorMenu.add(colorMenu_red);
+		colorMenu.add(colorMenu_cyan);
+		colorMenu.add(colorMenu_darkGray);
+		colorMenu.add(colorMenu_gray);
+		colorMenu.add(colorMenu_lightGray);
+		colorMenu.add(colorMenu_magenta);
+		colorMenu.add(colorMenu_orange);
+		colorMenu.add(colorMenu_pink);
+
+		// ************************************************
+
+		// Transforms
+		JMenu transformsMenu = new JMenu("Transforms");
+		JMenuItem transTranslation = new JMenuItem("Translation"); // Ã¤Ã¦Ã¦Ã¤
+		transTranslation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 5;
 			}
 		});
-        JMenuItem transScaling = new JMenuItem("Scaling");			//ñéìåí
-        transScaling.addActionListener(new ActionListener() {
+		JMenuItem transScaling = new JMenuItem("Scaling"); // Ã±Ã©Ã¬Ã¥Ã­
+		transScaling.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 6;
 			}
 		});
-        JMenuItem transRotation = new JMenuItem("Rotation");	//ñéáåá
-        transRotation.addActionListener(new ActionListener() {
+		JMenuItem transRotation = new JMenuItem("Rotation"); // Ã±Ã©Ã¡Ã¥Ã¡
+		transRotation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 7;
 			}
 		});
-        JMenuItem transMirror = new JMenuItem("Mirror");	//ùé÷åó
-        //transMove.setMnemonic(KeyEvent.VK_F1);
-        transMirror.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				itemChecked = 8;
-			}
-		});
-        JMenuItem transShearing = new JMenuItem("Shearing");				//âæéøä
-        //transMove.setMnemonic(KeyEvent.VK_F1);
-        transShearing.addActionListener(new ActionListener() {
+
+		JMenu transMirror = new JMenu("Mirror"); // Ã¹Ã©Ã·Ã¥Ã³
+		JMenuItem transMirrorX = new JMenuItem("Mirror X");
+		transMirrorX.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 9;
-			}
-		});
-        transformsMenu.add(transTranslation);
-        transformsMenu.add(transScaling);
-        transformsMenu.add(transRotation);
-        transformsMenu.add(transMirror);
-        transformsMenu.add(transShearing);
-        
-        
 
+				// clean the canvas
+				pane.fillCanvas(Color.WHITE);
 
-//************************************************
-        
-        // Help
-        JMenu helpMenu = new JMenu ("Help");
-        JMenuItem instructions = new JMenuItem("Instructions");
-        instructions.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//
-			}
-		});
-        JMenuItem about = new JMenuItem("About");
-        about.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//
-			}
-		});
-        helpMenu.add(instructions);
-        helpMenu.add(about);
-        
-//*********************************************
-        
-        menuBar.add(fileMenu);
-        menuBar.add(editMenu);
-        menuBar.add(objectsMenu);
-        menuBar.add(colorMenu);
-        menuBar.add(transformsMenu);
-        menuBar.add(helpMenu);
+				// find center of img
+				Point centerImg = getImageCenter();
 
-        pane.setLayout(new BorderLayout());
-        frame.add(menuBar, BorderLayout.NORTH);
-/**End menu's*******************************************************/
-        
-        // visibility 
-        frame.setVisible(true);
-          
-        // Mouse Listeners 
-        frame.addMouseWheelListener(new MouseWheelListener() {
-			
-			@Override
-			public void mouseWheelMoved(MouseWheelEvent e) {
-				System.out.println("mouseWheelMoved");
-				
-				switch (itemChecked){
-				case 6:		// Scaling
-					
-					
-					break;
+				for (Shape s : shapeList) {
+					for (int i = 0; i < s.getPoints().size(); i++) {
+						// Matrix A
+						double[][] mirrorXvalues = { { s.getPoints().get(i).x,
+								s.getPoints().get(i).y, 1 } };
+						Matrix mirrorX = new Matrix(mirrorXvalues);
+						// Matrix B
+						double[][] mirrorXMatrix = {
+								{ 1, 0, 0 },
+								{ 0, -1, 0 },
+								{ centerImg.x * (1 - 1),
+										centerImg.y * (1 - (-1)), 1 } };
+						Matrix mirrorXMatrix2 = new Matrix(mirrorXMatrix);
+						// Matrix A * Matrix B
+						Matrix mirrorXresult = mirrorX.times(mirrorXMatrix2);
+						System.out.println(mirrorXresult.toString());
+
+						// Set new points for object
+						s.getPoints().get(i).x = (int) mirrorXresult.get(0, 0);
+						s.getPoints().get(i).y = (int) mirrorXresult.get(0, 1);
+					}
+					s.draw();
 				}
 			}
 		});
-        frame.addMouseListener(new MouseListener() {
+		JMenuItem transMirrorY = new JMenuItem("Mirror Y");
+		transMirrorY.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				itemChecked = 10;
+				System.out.println("mirror Y");
+				// clean the canvas
+				pane.fillCanvas(Color.WHITE);
+
+				// find center of img
+				Point centerImg = getImageCenter();
+
+				for (Shape s : shapeList) {
+					for (int i = 0; i < s.getPoints().size(); i++) {
+						// Matrix A
+						double[][] mirrorYvalues = { { s.getPoints().get(i).x,
+								s.getPoints().get(i).y, 1 } };
+						Matrix mirrorY = new Matrix(mirrorYvalues);
+						// Matrix B
+						double[][] mirrorYMatrix = {
+								{ -1, 0, 0 },
+								{ 0, 1, 0 },
+								{ centerImg.x * (1 - (-1)),
+										centerImg.y * (1 - (1)), 1 } };
+						Matrix mirrorYMatrix2 = new Matrix(mirrorYMatrix);
+						// Matrix A * Matrix B
+						Matrix mirrorYresult = mirrorY.times(mirrorYMatrix2);
+						System.out.println(mirrorYresult.toString());
+
+						// Set new points for object
+						s.getPoints().get(i).x = (int) mirrorYresult.get(0, 0);
+						s.getPoints().get(i).y = (int) mirrorYresult.get(0, 1);
+					}
+					s.draw();
+				}
+			}
+		});
+		JMenuItem transMirrorXY = new JMenuItem("Mirror XY");
+		transMirrorXY.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				itemChecked = 11;
+
+				System.out.println("mirror XY");
+				// clean the canvas
+				pane.fillCanvas(Color.WHITE);
+
+				// find center of img
+				Point centerImg = getImageCenter();
+
+				for (Shape s : shapeList) {
+					for (int i = 0; i < s.getPoints().size(); i++) {
+						// Matrix A
+						double[][] mirrorYvalues = { { s.getPoints().get(i).x,
+								s.getPoints().get(i).y, 1 } };
+						Matrix mirrorXY = new Matrix(mirrorYvalues);
+						// Matrix B
+						double[][] mirrorXYMatrix = {
+								{ -1, 0, 0 },
+								{ 0, -1, 0 },
+								{ centerImg.x * (1 - (-1)), centerImg.y * (1 - (-1)), 1 } };
+						Matrix mirrorYMatrix2 = new Matrix(mirrorXYMatrix);
+						// Matrix A * Matrix B
+						Matrix mirrorXYresult = mirrorXY.times(mirrorYMatrix2);
+						System.out.println(mirrorXYresult.toString());
+
+						// Set new points for object
+						s.getPoints().get(i).x = (int) mirrorXYresult.get(0, 0);
+						s.getPoints().get(i).y = (int) mirrorXYresult.get(0, 1);
+					}
+					s.draw();
+				}
+			}
+		});
+		transMirror.add(transMirrorX);
+		transMirror.add(transMirrorY);
+		transMirror.add(transMirrorXY);
+		JMenuItem transShearing = new JMenuItem("Shearing"); // 
+		transShearing.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				itemChecked = 12;
+			}
+		});
+		transformsMenu.add(transTranslation);
+		transformsMenu.add(transScaling);
+		transformsMenu.add(transRotation);
+		transformsMenu.add(transMirror);
+		transformsMenu.add(transShearing);
+
+		// ************************************************
+
+		// Help
+		JMenu helpMenu = new JMenu("Help");
+		JMenuItem instructions = new JMenuItem("Instructions");
+		instructions.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//
+			}
+		});
+		JMenuItem about = new JMenuItem("About");
+		about.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//
+			}
+		});
+		helpMenu.add(instructions);
+		helpMenu.add(about);
+
+		// *********************************************
+
+		menuBar.add(fileMenu);
+		menuBar.add(editMenu);
+		menuBar.add(objectsMenu);
+		menuBar.add(colorMenu);
+		menuBar.add(transformsMenu);
+		menuBar.add(helpMenu);
+
+		pane.setLayout(new BorderLayout());
+		frame.add(menuBar, BorderLayout.NORTH);
+		/** End menu's *******************************************************/
+
+		// visibility
+		frame.setVisible(true);
+
+		// Mouse Listeners
+		frame.addMouseWheelListener(new MouseWheelListener() {
+
+			@Override
+			public void mouseWheelMoved(MouseWheelEvent e) {
+				System.out.println("wheel	(x=" + (e.getX() - 8) + ", y="
+						+ (e.getY() - 53) + ")");
+				System.out.println("mouseWheelMoved");
+
+				switch (itemChecked) {
+				case 6: // Scaling
+					if (e.getWheelRotation() > 0) {
+						System.out.println("mouseWheelMoved UP"); // zoom-out
+						zoom = 0.9;
+					} else {
+						System.out.println("mouseWheelMoved DOWN"); // zoom-in
+						zoom = 1.1;
+					}
+
+					// clean the canvas
+					pane.fillCanvas(Color.WHITE);
+
+					// find center of img
+					Point centerImg = getImageCenter();
+
+					System.out.println("zoom= " + zoom);
+					for (Shape s : shapeList) {
+						for (int i = 0; i < s.getPoints().size(); i++) {
+
+							// init vector with point parameter
+							int[] matric = { (int) s.getPoints().get(i).x,
+									(int) s.getPoints().get(i).y, 1 };
+
+							// Mult matric: [x*zoomX + y*0 + 1*centerX(1-zoomX)
+							// | ,x*0 + y*zoomY + 1*centerY(1-zoomY) | ,x*0 +
+							// y*0 + 1*1]
+							matric[0] = (int) (matric[0] * zoom + matric[1] * 0 + 1
+									* centerImg.x * (1 - zoom)); // x*zoomX +
+																	// y*0 +
+																	// 1*centerX(1-zoomX)
+							matric[1] = (int) (matric[0] * 0 + matric[1] * zoom + 1
+									* centerImg.y * (1 - zoom)); // x*0 +
+																	// y*zoomY +
+																	// 1*centerY(1-zoomY)
+							matric[2] = matric[0] * 0 + matric[1] * 0 + 1 * 1; // x*0
+																				// +
+																				// y*0
+																				// +
+																				// 1*1
+
+							// set the new point
+							s.getPoints().set(i,
+									new Point(matric[0], matric[1]));
+						}
+						s.draw();
+					}
+					break;
+				case 7: // rotate
+					// clean the canvas
+					pane.fillCanvas(Color.WHITE);
+					
+					// find center of img
+					// Point centerImg1 = getImageCenter();
+					
+					double teta = 0;
+					for (Shape s : shapeList) {
+						for (int i = 0; i < s.getPoints().size(); i++) {
+							// Matrix A
+							double[][] objectValues = { {
+									s.getPoints().get(i).x,
+									s.getPoints().get(i).y, 1 } };
+							Matrix object = new Matrix(objectValues);
+							if (e.getWheelRotation() > 0) {
+								System.out.println("mouseWheelMoved UP"); // Rotation Right
+								System.out.println("Rotation Right");
+								teta= 5;
+								
+							} else {
+								System.out.println("mouseWheelMoved DOWN"); // Rotation Left
+								teta= -5;
+							}
+
+							// Matrix B
+							// double g = centerImg.x + ((double)(-(Math.cos(5)))*centerImg.x) + ((double)Math.sin(5)*centerImg.y);
+							// double h = centerImg.y + ((double)(-(Math.sin(5)))*centerImg.x) + ((double)(-(Math.cos(5)))*centerImg.y);
+							double[][] rotateValues = {
+									{ Math.cos(Math.toRadians(teta)), Math.sin(Math.toRadians(teta)), 0 },
+									{ -Math.sin(Math.toRadians(teta)), Math.cos(Math.toRadians(teta)), 0 },
+									{ 0, 0, 1 } };
+									//{g, h, 1} };
+							// {centerImg.x*(1-(Math.cos(Math.toRadians(5)))),centerImg.y*(1-(Math.sin(Math.toRadians(5)))),1}};
+							Matrix rotate = new Matrix(rotateValues);
+							// Matrix A * Matrix B
+							Matrix rotateResult = object.times(rotate);
+
+							// Set new points for object
+							s.getPoints().get(i).x = (int) rotateResult.get(0,0);
+							s.getPoints().get(i).y = (int) rotateResult.get(0,1);
+						}
+						s.draw();
+
+					}
+					break;
+//				case 8: // Rotate Left
+//					System.out.println("Rotation Left");
+//					// clean the canvas
+//					pane.fillCanvas(Color.WHITE);
+//
+//					for (Shape s : shapeList) {
+//						for (int i = 0; i < s.getPoints().size(); i++) {
+//							// Matrix A
+//							double[][] objectValues = { {
+//									s.getPoints().get(i).x,
+//									s.getPoints().get(i).y, 1 } };
+//							Matrix object = new Matrix(objectValues);
+//
+//							// Matrix B
+//							double[][] rotateValues = {
+//									{ Math.cos(Math.toRadians(-5)), Math.sin(Math.toRadians(-5)), 0 },
+//									{ -Math.sin(Math.toRadians(-5)), Math.cos(Math.toRadians(-5)), 0 },
+//									{ 0, 0, 1 } };
+//							Matrix rotate = new Matrix(rotateValues);
+//							// Matrix A * Matrix B
+//							Matrix rotateResult = object.times(rotate);
+//							System.out.println(rotateResult.toString());
+//
+//							// Set new points for object
+//							s.getPoints().get(i).x = (int) rotateResult.get(0,
+//									0);
+//							s.getPoints().get(i).y = (int) rotateResult.get(0,
+//									1);
+//						}
+//						s.draw();
+//
+//					}
+//					break;
+				}
+			}
+		});
+		frame.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				System.out.println("Released	(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
-				pointRelease= new Point(e.getPoint().x-8, e.getPoint().y-53 );
+				System.out.println("Released	(x=" + (e.getX() - 8) + ", y="
+						+ (e.getY() - 53) + ")");
+				pointRelease = new Point(e.getPoint().x - 8,
+						e.getPoint().y - 53);
 
-				switch (itemChecked){
+				switch (itemChecked) {
 				// Draw a line
-				case 1: 
-					List<Point> linePoints=new ArrayList<>();
-					linePoints.add(new Point((int)pointPressed.getX(), (int)pointPressed.getY()));	//start
+				case 1:
+					List<Point> linePoints = new ArrayList<>();
+					linePoints.add(new Point((int) pointPressed.getX(),
+							(int) pointPressed.getY())); // start
 
-					if (WIDTH - pointRelease.getX() >=0 && HEIGHT - pointRelease.getY() >=0 ){
-  						linePoints.add(new Point((int)pointRelease.getX(),(int)pointRelease.getY()));	//end
-  						Line line = new Line(color, linePoints);  
-  						line.draw();
-  						shapeList.add(line);	//history
+					if (WIDTH - pointRelease.getX() >= 0
+							&& HEIGHT - pointRelease.getY() >= 0) {
+						linePoints.add(new Point((int) pointRelease.getX(),
+								(int) pointRelease.getY())); // end
+						Line line = new Line(color, linePoints);
+						line.draw();
+						shapeList.add(line); // history
+					} else {
+						linePoints.add(new Point((int) lastDrag_x,
+								(int) lastDrag_y)); // end
+						Line line = new Line(color, linePoints);
+						line.draw();
+						shapeList.add(line); // history
 					}
-  					else{ 
-  						linePoints.add(new Point((int)lastDrag_x,(int)lastDrag_y));	//end	
-  						Line line = new Line(color, linePoints);  
-  						line.draw();
-  						shapeList.add(line);	//history
-  					}
-  					break;
-				//Draw a circle
+					break;
+				// Draw a circle
 				case 2:
-					List<Point> circlePoints=new ArrayList<>();
+					List<Point> circlePoints = new ArrayList<>();
 					circlePoints.add(new Point(pointPressed.x, pointPressed.y));
 					circlePoints.add(new Point(pointRelease.x, pointRelease.y));
-					
-					Circle circle = new Circle(color, circlePoints);  
+
+					Circle circle = new Circle(color, circlePoints);
 					circle.draw();
-					shapeList.add(circle);	//history
+					shapeList.add(circle); // history
 					break;
-				//Draw a polygon
+				// Draw a polygon
 				case 3:
-					List<Point> polygonPoints=new ArrayList<>();					
-					polygonPoints.add(new Point(pointPressed.x,pointPressed.y));
-					polygonPoints.add(new Point(pointRelease.x,pointRelease.y));
-					
-					Poligon poligon = new Poligon(color, polygonPoints, poligon_vertex);  
+					List<Point> polygonPoints = new ArrayList<>();
+					polygonPoints
+							.add(new Point(pointPressed.x, pointPressed.y));
+					polygonPoints
+							.add(new Point(pointRelease.x, pointRelease.y));
+
+					Poligon poligon = new Poligon(color, polygonPoints,
+							poligon_vertex);
 					poligon.draw();
-					shapeList.add(poligon);	//history
+					shapeList.add(poligon); // history
 					break;
 				}
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				System.out.println("Pressed		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
-				pointPressed= new Point(e.getPoint().x-8, e.getPoint().y-53 );
-				
+				System.out.println("Pressed		(x=" + (e.getX() - 8) + ", y="
+						+ (e.getY() - 53) + ")");
+				pointPressed = new Point(e.getPoint().x - 8,
+						e.getPoint().y - 53);
+
 			}
+
 			@Override
 			public void mouseExited(MouseEvent e) {
-				System.out.println("Exited		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
-				//MouseExitFromWindow=true;
+				System.out.println("Exited		(x=" + (e.getX() - 8) + ", y="
+						+ (e.getY() - 53) + ")");
+				// MouseExitFromWindow=true;
 			}
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				System.out.println("Entered		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
-				//MouseExitFromWindow=false;
+				System.out.println("Entered		(x=" + (e.getX() - 8) + ", y="
+						+ (e.getY() - 53) + ")");
+				// MouseExitFromWindow=false;
 			}
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("Clicked		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
-				
-				if ((itemChecked==4) && (bezierPoints.size()<=4)){ //shape 4 = bezier curve
-					pane.putSuperPixel(e.getX()-8,e.getY()-53,color);	//put big pixel + Fix
-					bezierPoints.add(new Point(e.getX()-8,e.getY()-53));	//save point to list + Fix
-					
-					if(bezierPoints.size()==4 ) {
-						Bezier bezier = new Bezier(color, bezierPoints);  
-						bezier.draw();
-						shapeList.add(bezier);	//history
+				System.out.println("Clicked		(x=" + (e.getX() - 8) + ", y="
+						+ (e.getY() - 53) + ")");
 
-						bezierPoints.clear();	//init
-						
+				if ((itemChecked == 4) && (bezierPoints.size() <= 4)) { // shape 4 = bezier curve
+					pane.putSuperPixel(e.getX() - 8, e.getY() - 53, color); // put big pixel + Fix
+					bezierPoints.add(new Point(e.getX() - 8, e.getY() - 53)); // save point to list + Fix
+
+					if (bezierPoints.size() == 4) {
+						Bezier bezier = new Bezier(color, bezierPoints);
+						bezier.draw();
+						shapeList.add(bezier); // history
+
+						bezierPoints.clear(); // init
 					}
-				}	
-				
+				}
+
 			}
 		});
-        
-        // mouse motion 
-        frame.addMouseMotionListener(new MouseMotionListener() {
+
+		// mouse motion
+		frame.addMouseMotionListener(new MouseMotionListener() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				System.out.println("Moved		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
+				System.out.println("Moved		(x=" + (e.getX() - 8) + ", y="
+						+ (e.getY() - 53) + ")");
 			}
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				System.out.println("Dragged		(x="+(e.getX()-8)+", y="+(e.getY()-53)+")");
-				lastDrag_x= (int) e.getPoint().getX()-8;		//Fix
-				lastDrag_y= (int) e.getPoint().getY()-53;		//Fix
-				
-				//shift transformation
+				System.out.println("Dragged		(x=" + (e.getX() - 8) + ", y="
+						+ (e.getY() - 53) + ")");
+				lastDrag_x = (int) e.getPoint().getX() - 8; // Fix
+				lastDrag_y = (int) e.getPoint().getY() - 53; // Fix
+
+				// Shift transformation
 				switch (itemChecked) {
 				case 5:
 					int dragDx = lastDrag_x - pointPressed.x;
 					int dragDy = lastDrag_y - pointPressed.y;
 					pointPressed.x = lastDrag_x;
 					pointPressed.y = lastDrag_y;
-					//first ,clear the canvas 
+					// first ,clear the canvas
 					pane.fillCanvas(Color.white);
-					for (int i=0; i<shapeList.size(); i++){
-						//Change current shape cordinations
-						for ( int j=0; j < shapeList.get(i).getPoints().size(); j++ ){
+					for (int i = 0; i < shapeList.size(); i++) {
+						// Change current shape cordinations
+						for (int j = 0; j < shapeList.get(i).getPoints().size(); j++) {
 							shapeList.get(i).getPoints().get(j).x += dragDx;
 							shapeList.get(i).getPoints().get(j).y += dragDy;
 						}
-						//Draw current shape
+						// Draw current shape
 						shapeList.get(i).draw();
 						pane.repaint();
+					}
+					break;
+				case 12:
+					System.out.println("Shearing");
+					double shearingRate=1;
+					// clean the canvas
+					pane.fillCanvas(Color.WHITE);
+
+					// find center of img
+					Point centerImg = getImageCenter();
+
+					for (Shape s : shapeList) {
+						for (int i = 0; i < s.getPoints().size(); i++) {
+							// Matrix A
+							double[][] mirrorYvalues = { { s.getPoints().get(i).x,
+									s.getPoints().get(i).y, 1 } };
+							Matrix mirrorXY = new Matrix(mirrorYvalues);
+							// Matrix B
+							double[][] mirrorXYMatrix = {
+									{ 1, shearingRate, 0 },
+									{ 0, 1 , 0 },
+									{ centerImg.x * (1 - (-1)), centerImg.y * (1 - (-1)), 1 } };
+							Matrix mirrorYMatrix2 = new Matrix(mirrorXYMatrix);
+							// Matrix A * Matrix B
+							Matrix mirrorXYresult = mirrorXY.times(mirrorYMatrix2);
+							System.out.println(mirrorXYresult.toString());
+
+							// Set new points for object
+							s.getPoints().get(i).x = (int) mirrorXYresult.get(0, 0);
+							s.getPoints().get(i).y = (int) mirrorXYresult.get(0, 1);
+						}
+						s.draw();
 					}
 					break;
 				}
 			}
 		});
-        
-    }
-	
-	public static Point getImageCenter(){
-		
-		Point p = null;
-		int maxX=-1,maxY=-1,minX=WIDTH,minY=HEIGHT;
+
+	}
+
+	public static Point getImageCenter() {
+		int maxX = -1, maxY = -1, minX = WIDTH, minY = HEIGHT;
 		Point[][] pix;
-		for (int i=0; i<HEIGHT; i++){
-			for (int j=0; j<WIDTH; j++)
-			{
-				if (pane.getCanvas().getRGB(i, j) != Color.WHITE.getRGB()){
-					Point temp = new Point(i,j);
+		for (int x = 0; x < pane.WIDTH; x++) {
+			for (int y = 0; y < pane.HEIGHT; y++) {
+				if (pane.getCanvas().getRGB(x, y) != Color.WHITE.getRGB()) {
+					Point temp = new Point(x, y);
 					// min
-					if (temp.getX()<minX){			//x
-						minX=(int) temp.getX();
+					if (temp.getX() < minX) { // x
+						minX = (int) temp.getX();
 					}
-					if (temp.getY()<minY){			//y
-						minY=(int) temp.getY();
+					if (temp.getY() < minY) { // y
+						minY = (int) temp.getY();
 					}
-					
+
 					// MAX
-					if (temp.getX()>maxX){			//X
-						maxX=(int) temp.getX();
+					if (temp.getX() > maxX) { // X
+						maxX = (int) temp.getX();
 					}
-					if (temp.getY()>maxY){			//Y
-						maxY=(int) temp.getY();
+					if (temp.getY() > maxY) { // Y
+						maxY = (int) temp.getY();
 					}
 				}
 			}
 		}
-		
-		return new Point( (maxX+minX)/2 , (maxY+minY)/2 );
+		return new Point((maxX + minX) / 2, (maxY + minY) / 2);
 	}
-	
-	public static String promptForFile( Component parent ){
-	    JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
-	    fc.setFileSelectionMode( JFileChooser.FILES_ONLY );
-	    if( fc.showOpenDialog( parent ) == JFileChooser.APPROVE_OPTION )
-	    {
-	        return fc.getSelectedFile().getAbsolutePath();
-	    }
-	    return null;
+
+	public static String promptForFile(Component parent) {
+		JFileChooser fc = new JFileChooser(System.getProperty("user.dir"));
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		if (fc.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
+			return fc.getSelectedFile().getAbsolutePath();
+		}
+		return null;
 	}
 }

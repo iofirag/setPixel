@@ -46,7 +46,7 @@ public class myJPanel extends JPanel {
 	// ********************************************************
 
 	public void fillCanvas(Color c) {
-		System.out.println("clear");
+		System.out.println("fill screen");
 		for (int x = 0; x < MAX_DRAW_X+1; x++) {
 			for (int y = 0; y < MAX_DRAW_Y+1; y++) {
 				putPixel(x, y, c);
@@ -116,63 +116,39 @@ public class myJPanel extends JPanel {
 		repaint();
 	}
 
-	static public int calculateRadius(List<Point> points) {
-		int x0 = (int) points.get(0).getX();
-		int y0 = (int) points.get(0).getY();
-		int x1 = (int) points.get(1).getX();
-		int y1 = (int) points.get(1).getY();
-		
-		// Length from start to end
-		int counter = 0;
-		// /* absolute length end-start */
-		/**************************** BEGINING OF BREZENHAM'S LINE ALGORITHM *****************/
-		int dy = y1 - y0;
-		int dx = x1 - x0;
-
-		int sx, sy, errp, xp, yp;
-
-		if (dx < 0) {
-			dx = dx * -1;
-			sx = -1;
-		} else {
-			sx = 1;
-		}
-		if (dy < 0) {
-			dy = dy * -1;
-			sy = -1;
-		} else {
-			sy = 1;
-		}
-
-		counter++;
-		if (dx > dy) {
-			errp = 2 * dy - dx;
-			yp = y0;
-			for (xp = x0; xp != x1; xp += sx) {
-				if (errp > 0) {
-					yp += sy;
-					errp -= dx * 2;
-				}
-				errp += dy * 2;
-				counter++;
-			}
-		} else {
-			errp = 2 * dx - dy;
-			xp = x0;
-			for (yp = y0; yp != y1; yp += sy) {
-				if (errp > 0) {
-					xp += sx;
-					errp -= dy * 2;
-				}
-				errp += dx * 2;
-				counter++;
-			}
-		}
-		return counter;
-	}
+	
 
 	// Implementation of circle drawing algorithm
-	public void drawCircle(Color c, List<Point> points, int radius) {
+//	public void drawCircle(Color c, List<Point> points, int radius) {
+//		int x = radius;
+//		int y = 0;
+//		
+//		int x0 = (int) points.get(0).getX();
+//		int y0 = (int) points.get(0).getY();
+//		int radiusError = 1 - x;
+//
+//		while (x >= y) {
+//			putPixel(x0 + x,	y0 + y,		c);
+//			putPixel(x0 + y,	y0 + x, 	c);
+//			putPixel(x0 + -x,	y0 + y, 	c);
+//			putPixel(x0 + -y,	y0 + x, 	c);
+//			putPixel(x0 + -x,	y0 + -y,	c);
+//			putPixel(x0 + -y,	y0 + -x,	c);
+//			putPixel(x0 + x,	y0 + -y,	c);
+//			putPixel(x0 + y,	y0 + -x,	c);
+//			y++;
+//			if (radiusError < 0) {
+//				radiusError += 2 * y + 1;
+//			} else {
+//				x--;
+//				radiusError += 2 * (y - x + 1);
+//			}
+//		}
+//		repaint();
+//	}
+
+	public void drawCircle(Color c, List<Point> points) {
+		int radius = Circle.calculateRadius(points);
 		int x = radius;
 		int y = 0;
 		
@@ -199,30 +175,23 @@ public class myJPanel extends JPanel {
 		}
 		repaint();
 	}
-
 	// Polygon drawing
 	public void regularPolygon(Color c, List<Point> polygonPoints,
 			int pointsNumber) {
-		
+		int x0= (int) polygonPoints.get(0).getX();
+		int y0= (int) polygonPoints.get(0).getY();
+		int x1= (int) polygonPoints.get(1).getX();
+		int y1= (int) polygonPoints.get(1).getY();
 		Point p[] = new Point[pointsNumber];
-		int disatance = (int) Math
-				.sqrt((polygonPoints.get(0).getX() - polygonPoints.get(1)
-						.getX())
-						* (polygonPoints.get(0).getX() - polygonPoints.get(1)
-								.getX())
-						+ (polygonPoints.get(0).getY() - polygonPoints.get(1)
-								.getY())
-						* (polygonPoints.get(0).getY() - polygonPoints.get(1)
-								.getY()));
+		int disatance = (int) Math.sqrt((x0 - x1)* (x0 - x1)+ (y0 - y1)* (y0 - y1));
 		for (int i = 0; i < pointsNumber; i++) {
 			p[i] = new Point();
 			p[i].setLocation(
-					((int) (polygonPoints.get(0).getX() + disatance
+					((int) (x0 + disatance
 							* Math.cos(i * 2 * Math.PI / pointsNumber))),
-					(int) (polygonPoints.get(0).getY() + disatance
+					(int) (y0 + disatance
 							* Math.sin(i * 2 * Math.PI / pointsNumber)));
 		}
-		//polygonPoints.clear();
 		List<Point> temp = new ArrayList<Point>(); 
 		temp.add(new Point((int) (p[0].getX()), (int) (p[0].getY())));
 		Point pointToClose = new Point(((int) (p[0].getX())),
