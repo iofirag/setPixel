@@ -15,6 +15,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -48,12 +49,15 @@ public class main {
 
 	// History object draw
 	static List<Shape> shapeList = new ArrayList<>();
+	//static List<Point> pointsOnCanvas = new ArrayList<>();
+	
 	static double zoom = 1; // 100%
 	// Mouse variables
 	static Point pointPressed = null;
 	static Point pointRelease = null;
 	static int lastDrag_x = 0;
 	static int lastDrag_y = 0;
+	static Point currMousePoint= null; 
 	static boolean MouseExitFromWindow = false;
 
 	// item & color user choose
@@ -96,7 +100,7 @@ public class main {
 		frame.setResizable(true);
 		/* close all app in close button */
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+		
 		// Create the menu bar.
 		JMenuBar menuBar = new JMenuBar();
 
@@ -728,13 +732,33 @@ public class main {
 		transMirror.add(transMirrorX);
 		transMirror.add(transMirrorY);
 		transMirror.add(transMirrorXY);
+<<<<<<< HEAD
 		JMenuItem transShearing = new JMenuItem("Shearing"); // 
 		transShearing.addActionListener(new ActionListener() {
+=======
+		
+		JMenu transShearing = new JMenu("Shearing"); // גזירה
+		JMenuItem transShearingX = new JMenuItem("Shearing X");
+		transShearingX.addActionListener(new ActionListener() {
+>>>>>>> b584a4a5e1ddb6c9547286ad6ac3743dfb513f61
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 12;
 			}
 		});
+		JMenuItem transShearingY = new JMenuItem("Shearing Y");
+		transShearingX.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				itemChecked = 13;
+			}
+		});
+		transShearing.add(transShearingX);
+		transShearing.add(transShearingY);
+		
+		// ************************************************
+		
+		
 		transformsMenu.add(transTranslation);
 		transformsMenu.add(transScaling);
 		transformsMenu.add(transRotation);
@@ -788,7 +812,8 @@ public class main {
 				System.out.println("mouseWheelMoved");
 
 				switch (itemChecked) {
-				case 6: // Scaling
+				case 6: // Scaling 
+				{
 					if (e.getWheelRotation() > 0) {
 						System.out.println("mouseWheelMoved UP"); // zoom-out
 						zoom = 0.9;
@@ -802,7 +827,7 @@ public class main {
 
 					// find center of img
 					Point centerImg = getImageCenter();
-
+						centerImg = currMousePoint;
 					System.out.println("zoom= " + zoom);
 					for (Shape s : shapeList) {
 						for (int i = 0; i < s.getPoints().size(); i++) {
@@ -834,13 +859,16 @@ public class main {
 						}
 						s.draw();
 					}
+				}
 					break;
 				case 7: // rotate
 					// clean the canvas
 					pane.fillCanvas(Color.WHITE);
 					
 					// find center of img
-					// Point centerImg1 = getImageCenter();
+					Point centerImg = getImageCenter();
+							//centerImg = currMousePoint;
+					System.out.println("centerImg="+centerImg.x+", "+centerImg.y);
 					
 					double teta = 0;
 					for (Shape s : shapeList) {
@@ -848,8 +876,10 @@ public class main {
 							// Matrix A
 							double[][] objectValues = { {
 									s.getPoints().get(i).x,
-									s.getPoints().get(i).y, 1 } };
+									s.getPoints().get(i).y, 
+									1 } };
 							Matrix object = new Matrix(objectValues);
+							
 							if (e.getWheelRotation() > 0) {
 								System.out.println("mouseWheelMoved UP"); // Rotation Right
 								System.out.println("Rotation Right");
@@ -861,14 +891,16 @@ public class main {
 							}
 
 							// Matrix B
-							// double g = centerImg.x + ((double)(-(Math.cos(5)))*centerImg.x) + ((double)Math.sin(5)*centerImg.y);
-							// double h = centerImg.y + ((double)(-(Math.sin(5)))*centerImg.x) + ((double)(-(Math.cos(5)))*centerImg.y);
+							 //double g = centerImg.x + ((double)(-(Math.cos(teta)))*centerImg.x) + ((double)Math.sin(teta)*centerImg.y);
+							 //double h = centerImg.y + ((double)(-(Math.sin(teta)))*centerImg.x) + ((double)(-(Math.cos(teta)))*centerImg.y);
+							//double g = centerImg.x;
+							//double h = centerImg.y;
 							double[][] rotateValues = {
 									{ Math.cos(Math.toRadians(teta)), Math.sin(Math.toRadians(teta)), 0 },
 									{ -Math.sin(Math.toRadians(teta)), Math.cos(Math.toRadians(teta)), 0 },
-									{ 0, 0, 1 } };
+									//{ 0, 0, 1 } };
 									//{g, h, 1} };
-							// {centerImg.x*(1-(Math.cos(Math.toRadians(5)))),centerImg.y*(1-(Math.sin(Math.toRadians(5)))),1}};
+							 {centerImg.x*(1-(Math.cos(Math.toRadians(teta)))), centerImg.y*(1-(Math.cos(Math.toRadians(teta)))),1}};
 							Matrix rotate = new Matrix(rotateValues);
 							// Matrix A * Matrix B
 							Matrix rotateResult = object.times(rotate);
@@ -881,39 +913,78 @@ public class main {
 
 					}
 					break;
-//				case 8: // Rotate Left
-//					System.out.println("Rotation Left");
-//					// clean the canvas
-//					pane.fillCanvas(Color.WHITE);
-//
-//					for (Shape s : shapeList) {
-//						for (int i = 0; i < s.getPoints().size(); i++) {
-//							// Matrix A
-//							double[][] objectValues = { {
-//									s.getPoints().get(i).x,
-//									s.getPoints().get(i).y, 1 } };
-//							Matrix object = new Matrix(objectValues);
-//
-//							// Matrix B
-//							double[][] rotateValues = {
-//									{ Math.cos(Math.toRadians(-5)), Math.sin(Math.toRadians(-5)), 0 },
-//									{ -Math.sin(Math.toRadians(-5)), Math.cos(Math.toRadians(-5)), 0 },
-//									{ 0, 0, 1 } };
-//							Matrix rotate = new Matrix(rotateValues);
-//							// Matrix A * Matrix B
-//							Matrix rotateResult = object.times(rotate);
-//							System.out.println(rotateResult.toString());
-//
-//							// Set new points for object
-//							s.getPoints().get(i).x = (int) rotateResult.get(0,
-//									0);
-//							s.getPoints().get(i).y = (int) rotateResult.get(0,
-//									1);
-//						}
-//						s.draw();
-//
-//					}
-//					break;
+				case 12:	//shearing
+					// clean the canvas
+					pane.fillCanvas(Color.WHITE);
+					
+					double a = 0;
+					for (Shape s : shapeList) {
+						for (int i = 0; i < s.getPoints().size(); i++) {
+							// Matrix A
+							double[][] objectValues = { {
+									s.getPoints().get(i).x,
+									s.getPoints().get(i).y, 
+									1 } };
+							Matrix object = new Matrix(objectValues);
+							
+							
+							if (e.getWheelRotation() > 0) {
+								System.out.println("mouseWheelMoved UP"); // Rotation Right
+								System.out.println("Rotation Right");
+								a = 0.1;
+							} else {
+								System.out.println("mouseWheelMoved DOWN"); // Rotation Left
+								a= -0.1;
+							}
+							
+							
+							double sheering[][] ={{1,0,0},{a,1,0},{0,0,1}};
+							Matrix sheeringMatrix = new Matrix(sheering);
+							Matrix result = object.times(sheeringMatrix);
+							
+							// Set new points for object
+							s.getPoints().get(i).x = (int) result.get(0,0);
+							s.getPoints().get(i).y = (int) result.get(0,1);
+						}
+						s.draw();
+					}
+					break;
+				case 13:	//shearing
+					// clean the canvas
+					pane.fillCanvas(Color.WHITE);
+					
+					double b = 0;
+					for (Shape s : shapeList) {
+						for (int i = 0; i < s.getPoints().size(); i++) {
+							// Matrix A
+							double[][] objectValues = { {
+									s.getPoints().get(i).x,
+									s.getPoints().get(i).y, 
+									1 } };
+							Matrix object = new Matrix(objectValues);
+							
+							
+							if (e.getWheelRotation() > 0) {
+								System.out.println("mouseWheelMoved UP"); // Rotation Right
+								System.out.println("Rotation Right");
+								b = 0.1;
+							} else {
+								System.out.println("mouseWheelMoved DOWN"); // Rotation Left
+								b= -0.1;
+							}
+							
+							
+							double sheering[][] ={{1,b,0},{0,1,0},{0,0,1}};
+							Matrix sheeringMatrix = new Matrix(sheering);
+							Matrix result = object.times(sheeringMatrix);
+							
+							// Set new points for object
+							s.getPoints().get(i).x = (int) result.get(0,0);
+							s.getPoints().get(i).y = (int) result.get(0,1);
+						}
+						s.draw();
+					}
+					break;
 				}
 			}
 		});
@@ -1023,6 +1094,7 @@ public class main {
 			public void mouseMoved(MouseEvent e) {
 				System.out.println("Moved		(x=" + (e.getX() - 8) + ", y="
 						+ (e.getY() - 53) + ")");
+				currMousePoint = new Point(e.getX()-8, e.getY()-53);
 			}
 
 			@Override
@@ -1091,6 +1163,7 @@ public class main {
 	}
 
 	public static Point getImageCenter() {
+<<<<<<< HEAD
 		int maxX = -1, maxY = -1, minX = WIDTH, minY = HEIGHT;
 		Point[][] pix;
 		for (int x = 0; x < pane.WIDTH; x++) {
@@ -1116,6 +1189,49 @@ public class main {
 			}
 		}
 		return new Point((maxX + minX) / 2, (maxY + minY) / 2);
+=======
+//		int maxX = 0, maxY = 0, minX = 0, minY = 0;
+//		int counter =0;
+//
+//		for (int x = 0; x < pane.getCanvas().getWidth(); x++) {
+//			for (int y = 0; y < pane.getCanvas().getHeight(); y++) {
+//				System.out.println("Canvas rgb color: "+ pane.getCanvas().getRGB(x, y)+ "White color:" + Color.RED.getRGB());
+//				
+//				if (pane.getCanvas().getRGB(x, y) == Color.BLACK.getRGB()) {
+//					
+//					counter++;
+//					System.out.println("Counter val: " + counter);
+//					
+//					Point temp = new Point(x, y);
+//					
+//					if (counter==1){	//init
+//						minX = (int) temp.getX();
+//						minY = (int) temp.getY();
+//						maxX = (int) temp.getX();
+//						maxY = (int) temp.getY();
+//					}
+//					// min
+//					if (temp.getX() < minX) { // x
+//						minX = (int) temp.getX();
+//					}
+//					if (temp.getY() < minY) { // y
+//						minY = (int) temp.getY();
+//					}
+//
+//					// MAX
+//					if (temp.getX() > maxX) { // X
+//						maxX = (int) temp.getX();
+//					}
+//					if (temp.getY() > maxY) { // Y
+//						maxY = (int) temp.getY();
+//					}
+//				}
+//			}
+//		}
+		//return new Point((maxX + minX) / 2, (maxY + minY) / 2);
+		return new Point (WIDTH/2, HEIGHT/2);
+		//return new Point (0, 0);
+>>>>>>> b584a4a5e1ddb6c9547286ad6ac3743dfb513f61
 	}
 
 	public static String promptForFile(Component parent) {

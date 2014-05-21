@@ -27,7 +27,7 @@ public class myJPanel extends JPanel {
 		// using auto the function getPreferredSize() so we don't call it
 		MAX_DRAW_X = canvas.getWidth()-1;		//fix
 	    MAX_DRAW_Y = canvas.getHeight()-24;		//fix
-	    fillCanvas(Color.white);
+	    fillCanvas(Color.WHITE);
 	}
 
 	// *******override***********************************************
@@ -284,6 +284,7 @@ public class myJPanel extends JPanel {
 	}
 
 	public void putPixel(int x, int y, Color c) {
+		//main.pointsOnCanvas.add(new Point(x,y));
 		int color = c.getRGB();
 		if (x<0  ||  x>MAX_DRAW_X  ||  y<0   ||  y>MAX_DRAW_Y){
 			if (x<0) 				x=0;
@@ -294,6 +295,7 @@ public class myJPanel extends JPanel {
 		}
 		try{
 			canvas.setRGB(x, y, color);
+			
 		}catch (Exception e) {
 			System.out.println("Error! "+x+" "+y);
 		}
