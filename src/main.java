@@ -769,14 +769,35 @@ public class main {
 		instructions.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//
+				JOptionPane.showMessageDialog(null, "Instructions:\n\n" +
+						"Opening file:\n" +
+						"   open 'boat.txt' from 'pictures' directory.\n\n\n" +
+						"" +
+						"Transforming:\n" +
+						"" +
+						"   Translation-\n" +
+						"   click with mouse and drag it.\n\n" +
+						"" +
+						"   Scaling-\n" +
+						"   Use with mouse wheel for zoom-in and zoom-out.\n\n" +
+						"" +
+						"   Rotation-\n" +
+						"   Use with mouse wheel for rotate+20 and rotate-20.\n\n" +
+						"" +
+						"   Shearing X or Y-\n" +
+						"   Use with mouse wheel for shearing over X or Y.\n\n" +
+						"");
 			}
 		});
 		JMenuItem about = new JMenuItem("About");
 		about.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//
+				JOptionPane.showMessageDialog(null, "About:\n\n" +
+						"Ofir Aghai\n" +
+						"Vidran Abdovich\n\n" +
+						"" +
+						"have fun!");
 			}
 		});
 		helpMenu.add(instructions);
