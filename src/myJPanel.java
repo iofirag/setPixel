@@ -152,10 +152,12 @@ public class myJPanel extends JPanel {
 		int x = radius;
 		int y = 0;
 		
+		// center point
 		int x0 = (int) points.get(0).getX();
 		int y0 = (int) points.get(0).getY();
 		int radiusError = 1 - x;
 
+		// draw every 1/8 of circle
 		while (x >= y) {
 			putPixel(x0 + x,	y0 + y,		c);
 			putPixel(x0 + y,	y0 + x, 	c);

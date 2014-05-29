@@ -3,6 +3,7 @@
  */
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -113,6 +114,8 @@ public class main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Component c = null;
+				pane.fillCanvas(Color.white);
+				shapeList.clear();
 				String pathString = promptForFile(c);
 				Path path = Paths.get(pathString);
 				try {
@@ -393,18 +396,9 @@ public class main {
 		clearScreen_menu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Way A
-				// if (shapeList.size()>0){
-				// for (Shape s : shapeList){
-				// s.setColor(Color.WHITE);
-				// s.draw();
-				// }
-				// }
 
-				// Way B
 				pane.fillCanvas(Color.white);
 				shapeList.clear();
-				// System.out.println( shapeList.toString() );
 			}
 		});
 		editMenu.add(unDo_menu);
@@ -733,7 +727,7 @@ public class main {
 		transMirror.add(transMirrorY);
 		transMirror.add(transMirrorXY);
 
-		JMenu transShearing = new JMenu("Shearing"); // �����
+		JMenu transShearing = new JMenu("Shearing"); // Shearing
 		JMenuItem transShearingX = new JMenuItem("Shearing X");
 		transShearingX.addActionListener(new ActionListener() {
 
@@ -743,10 +737,11 @@ public class main {
 			}
 		});
 		JMenuItem transShearingY = new JMenuItem("Shearing Y");
-		transShearingX.addActionListener(new ActionListener() {
+		transShearingY.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 13;
+				System.out.println("itemChecked="+itemChecked);
 			}
 		});
 		transShearing.add(transShearingX);
@@ -878,7 +873,7 @@ public class main {
 					}
 				}
 					break;
-				case 7: // rotate
+				case 7:{ // rotate
 					// clean the canvas
 					pane.fillCanvas(Color.WHITE);
 					
@@ -908,16 +903,10 @@ public class main {
 							}
 
 							// Matrix B
-							 //double g = centerImg.x + ((double)(-(Math.cos(teta)))*centerImg.x) + ((double)Math.sin(teta)*centerImg.y);
-							 //double h = centerImg.y + ((double)(-(Math.sin(teta)))*centerImg.x) + ((double)(-(Math.cos(teta)))*centerImg.y);
-							//double g = centerImg.x;
-							//double h = centerImg.y;
 							double[][] rotateValues = {
-									{ Math.cos(Math.toRadians(teta)), Math.sin(Math.toRadians(teta)), 0 },
-									{ -Math.sin(Math.toRadians(teta)), Math.cos(Math.toRadians(teta)), 0 },
-									//{ 0, 0, 1 } };
-									//{g, h, 1} };
-							 {centerImg.x*(1-(Math.cos(Math.toRadians(teta)))), centerImg.y*(1-(Math.cos(Math.toRadians(teta)))),1}};
+									{ Math.cos(Math.toRadians(teta)), -Math.sin(Math.toRadians(teta)), 0 },
+									{ Math.sin(Math.toRadians(teta)), Math.cos(Math.toRadians(teta)), 0 },
+									{-centerImg.x*Math.cos(Math.toRadians(teta)) - centerImg.y*Math.sin(Math.toRadians(teta)) + centerImg.x, centerImg.x* Math.sin(Math.toRadians(teta))- centerImg.y * Math.cos(Math.toRadians(teta)) + centerImg.y ,1}};
 							Matrix rotate = new Matrix(rotateValues);
 							// Matrix A * Matrix B
 							Matrix rotateResult = object.times(rotate);
@@ -929,8 +918,9 @@ public class main {
 						s.draw();
 
 					}
+				}
 					break;
-				case 12:	//shearing
+				case 12:{	//shearing X
 					// clean the canvas
 					pane.fillCanvas(Color.WHITE);
 					
@@ -954,6 +944,8 @@ public class main {
 								a= -0.1;
 							}
 							
+							// find center of img
+							Point centerImg = getImageCenter();
 							
 							double sheering[][] ={{1,0,0},{a,1,0},{0,0,1}};
 							Matrix sheeringMatrix = new Matrix(sheering);
@@ -965,8 +957,10 @@ public class main {
 						}
 						s.draw();
 					}
+				}
 					break;
-				case 13:	//shearing
+				case 13:{	//shearing Y
+					System.out.println("shearing Y");
 					// clean the canvas
 					pane.fillCanvas(Color.WHITE);
 					
@@ -990,6 +984,8 @@ public class main {
 								b= -0.1;
 							}
 							
+							// find center of img
+							Point centerImg = getImageCenter();
 							
 							double sheering[][] ={{1,b,0},{0,1,0},{0,0,1}};
 							Matrix sheeringMatrix = new Matrix(sheering);
@@ -1001,6 +997,7 @@ public class main {
 						}
 						s.draw();
 					}
+				}
 					break;
 				}
 			}
@@ -1180,49 +1177,7 @@ public class main {
 	}
 
 	public static Point getImageCenter() {
-
-//		int maxX = 0, maxY = 0, minX = 0, minY = 0;
-//		int counter =0;
-//
-//		for (int x = 0; x < pane.getCanvas().getWidth(); x++) {
-//			for (int y = 0; y < pane.getCanvas().getHeight(); y++) {
-//				System.out.println("Canvas rgb color: "+ pane.getCanvas().getRGB(x, y)+ "White color:" + Color.RED.getRGB());
-//				
-//				if (pane.getCanvas().getRGB(x, y) == Color.BLACK.getRGB()) {
-//					
-//					counter++;
-//					System.out.println("Counter val: " + counter);
-//					
-//					Point temp = new Point(x, y);
-//					
-//					if (counter==1){	//init
-//						minX = (int) temp.getX();
-//						minY = (int) temp.getY();
-//						maxX = (int) temp.getX();
-//						maxY = (int) temp.getY();
-//					}
-//					// min
-//					if (temp.getX() < minX) { // x
-//						minX = (int) temp.getX();
-//					}
-//					if (temp.getY() < minY) { // y
-//						minY = (int) temp.getY();
-//					}
-//
-//					// MAX
-//					if (temp.getX() > maxX) { // X
-//						maxX = (int) temp.getX();
-//					}
-//					if (temp.getY() > maxY) { // Y
-//						maxY = (int) temp.getY();
-//					}
-//				}
-//			}
-//		}
-		//return new Point((maxX + minX) / 2, (maxY + minY) / 2);
 		return new Point (WIDTH/2, HEIGHT/2);
-		//return new Point (0, 0);
-
 	}
 
 	public static String promptForFile(Component parent) {
