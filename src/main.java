@@ -732,15 +732,11 @@ public class main {
 		transMirror.add(transMirrorX);
 		transMirror.add(transMirrorY);
 		transMirror.add(transMirrorXY);
-<<<<<<< HEAD
-		JMenuItem transShearing = new JMenuItem("Shearing"); // 
-		transShearing.addActionListener(new ActionListener() {
-=======
-		
-		JMenu transShearing = new JMenu("Shearing"); // âæéøä
+
+		JMenu transShearing = new JMenu("Shearing"); // ï¿½ï¿½ï¿½ï¿½ï¿½
 		JMenuItem transShearingX = new JMenuItem("Shearing X");
 		transShearingX.addActionListener(new ActionListener() {
->>>>>>> b584a4a5e1ddb6c9547286ad6ac3743dfb513f61
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 12;
@@ -1184,33 +1180,7 @@ public class main {
 	}
 
 	public static Point getImageCenter() {
-<<<<<<< HEAD
-		int maxX = -1, maxY = -1, minX = WIDTH, minY = HEIGHT;
-		Point[][] pix;
-		for (int x = 0; x < pane.WIDTH; x++) {
-			for (int y = 0; y < pane.HEIGHT; y++) {
-				if (pane.getCanvas().getRGB(x, y) != Color.WHITE.getRGB()) {
-					Point temp = new Point(x, y);
-					// min
-					if (temp.getX() < minX) { // x
-						minX = (int) temp.getX();
-					}
-					if (temp.getY() < minY) { // y
-						minY = (int) temp.getY();
-					}
 
-					// MAX
-					if (temp.getX() > maxX) { // X
-						maxX = (int) temp.getX();
-					}
-					if (temp.getY() > maxY) { // Y
-						maxY = (int) temp.getY();
-					}
-				}
-			}
-		}
-		return new Point((maxX + minX) / 2, (maxY + minY) / 2);
-=======
 //		int maxX = 0, maxY = 0, minX = 0, minY = 0;
 //		int counter =0;
 //
@@ -1252,7 +1222,7 @@ public class main {
 		//return new Point((maxX + minX) / 2, (maxY + minY) / 2);
 		return new Point (WIDTH/2, HEIGHT/2);
 		//return new Point (0, 0);
->>>>>>> b584a4a5e1ddb6c9547286ad6ac3743dfb513f61
+
 	}
 
 	public static String promptForFile(Component parent) {
