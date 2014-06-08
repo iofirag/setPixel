@@ -46,7 +46,6 @@ public class myJPanel extends JPanel {
 	// ********************************************************
 
 	public void fillCanvas(Color c) {
-		System.out.println("fill screen");
 		for (int x = 0; x < MAX_DRAW_X+1; x++) {
 			for (int y = 0; y < MAX_DRAW_Y+1; y++) {
 				putPixel(x, y, c);
@@ -56,7 +55,6 @@ public class myJPanel extends JPanel {
 	}
 
 	public void drawLine(Color c, List<Point> points) {
-		System.out.println("drawLine");
 		int x0 = (int) points.get(0).getX();
 		int y0 = (int) points.get(0).getY();
 		int x1 = (int) points.get(1).getX();
@@ -293,13 +291,11 @@ public class myJPanel extends JPanel {
 			if (x>MAX_DRAW_X)		x=MAX_DRAW_X;
 			if (y<0)				y=0;
 			if (y>MAX_DRAW_Y)	y=MAX_DRAW_Y;
-			System.out.println("Coordinate out of bounds, Auto fix.");
 		}
 		try{
 			canvas.setRGB(x, y, color);
 			
 		}catch (Exception e) {
-			System.out.println("Error! "+x+" "+y);
 		}
 	}
 
@@ -314,7 +310,6 @@ public class myJPanel extends JPanel {
 			canvas.setRGB(x + 1, y - 1, color);
 			repaint();
 		} catch (Exception e) {
-			System.out.println("Coordinate out of bounds!");
 		}
 	}
 

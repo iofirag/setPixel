@@ -328,7 +328,6 @@ public class main {
 						break;
 
 					default:
-						System.out.println("line error.");
 						break;
 					}
 				}
@@ -359,7 +358,6 @@ public class main {
 						bw.write(s.toString() + '\n');
 					}
 					bw.close();
-					System.out.println("Done");
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -589,21 +587,21 @@ public class main {
 
 		// Transforms
 		JMenu transformsMenu = new JMenu("Transforms");
-		JMenuItem transTranslation = new JMenuItem("Translation"); // äææä
+		JMenuItem transTranslation = new JMenuItem("Translation"); 
 		transTranslation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 5;
 			}
 		});
-		JMenuItem transScaling = new JMenuItem("Scaling"); // ñéìåí
+		JMenuItem transScaling = new JMenuItem("Scaling"); 
 		transScaling.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 6;
 			}
 		});
-		JMenuItem transRotation = new JMenuItem("Rotation"); // ñéáåá
+		JMenuItem transRotation = new JMenuItem("Rotation"); 
 		transRotation.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -611,7 +609,7 @@ public class main {
 			}
 		});
 
-		JMenu transMirror = new JMenu("Mirror"); // ùé÷åó
+		JMenu transMirror = new JMenu("Mirror"); 
 		JMenuItem transMirrorX = new JMenuItem("Mirror X");
 		transMirrorX.addActionListener(new ActionListener() {
 			@Override
@@ -639,7 +637,6 @@ public class main {
 						Matrix mirrorXMatrix2 = new Matrix(mirrorXMatrix);
 						// Matrix A * Matrix B
 						Matrix mirrorXresult = mirrorX.times(mirrorXMatrix2);
-						System.out.println(mirrorXresult.toString());
 
 						// Set new points for object
 						s.getPoints().get(i).x = (int) mirrorXresult.get(0, 0);
@@ -654,7 +651,6 @@ public class main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 10;
-				System.out.println("mirror Y");
 				// clean the canvas
 				pane.fillCanvas(Color.WHITE);
 
@@ -670,13 +666,12 @@ public class main {
 						// Matrix B
 						double[][] mirrorYMatrix = {
 								{ -1, 0, 0 },
-								{ 0, 1, 0 },
+								{  0, 1, 0 },
 								{ centerImg.x * (1 - (-1)),
 										centerImg.y * (1 - (1)), 1 } };
 						Matrix mirrorYMatrix2 = new Matrix(mirrorYMatrix);
 						// Matrix A * Matrix B
 						Matrix mirrorYresult = mirrorY.times(mirrorYMatrix2);
-						System.out.println(mirrorYresult.toString());
 
 						// Set new points for object
 						s.getPoints().get(i).x = (int) mirrorYresult.get(0, 0);
@@ -692,7 +687,6 @@ public class main {
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 11;
 
-				System.out.println("mirror XY");
 				// clean the canvas
 				pane.fillCanvas(Color.WHITE);
 
@@ -713,7 +707,6 @@ public class main {
 						Matrix mirrorYMatrix2 = new Matrix(mirrorXYMatrix);
 						// Matrix A * Matrix B
 						Matrix mirrorXYresult = mirrorXY.times(mirrorYMatrix2);
-						System.out.println(mirrorXYresult.toString());
 
 						// Set new points for object
 						s.getPoints().get(i).x = (int) mirrorXYresult.get(0, 0);
@@ -741,7 +734,6 @@ public class main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				itemChecked = 13;
-				System.out.println("itemChecked="+itemChecked);
 			}
 		});
 		transShearing.add(transShearingX);
@@ -819,18 +811,13 @@ public class main {
 
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				System.out.println("wheel	(x=" + (e.getX() - 8) + ", y="
-						+ (e.getY() - 53) + ")");
-				System.out.println("mouseWheelMoved");
 
 				switch (itemChecked) {
 				case 6: // Scaling 
 				{
 					if (e.getWheelRotation() > 0) {
-						System.out.println("mouseWheelMoved UP"); // zoom-out
 						zoom = 0.9;
 					} else {
-						System.out.println("mouseWheelMoved DOWN"); // zoom-in
 						zoom = 1.1;
 					}
 
@@ -840,7 +827,6 @@ public class main {
 					// find center of img
 					Point centerImg = getImageCenter();
 						centerImg = currMousePoint;
-					System.out.println("zoom= " + zoom);
 					for (Shape s : shapeList) {
 						for (int i = 0; i < s.getPoints().size(); i++) {
 
@@ -880,7 +866,6 @@ public class main {
 					// find center of img
 					Point centerImg = getImageCenter();
 							//centerImg = currMousePoint;
-					System.out.println("centerImg="+centerImg.x+", "+centerImg.y);
 					
 					double teta = 0;
 					for (Shape s : shapeList) {
@@ -893,12 +878,9 @@ public class main {
 							Matrix object = new Matrix(objectValues);
 							
 							if (e.getWheelRotation() > 0) {
-								System.out.println("mouseWheelMoved UP"); // Rotation Right
-								System.out.println("Rotation Right");
 								teta= 5;
 								
 							} else {
-								System.out.println("mouseWheelMoved DOWN"); // Rotation Left
 								teta= -5;
 							}
 
@@ -936,11 +918,8 @@ public class main {
 							
 							
 							if (e.getWheelRotation() > 0) {
-								System.out.println("mouseWheelMoved UP"); // Rotation Right
-								System.out.println("Rotation Right");
 								a = 0.1;
 							} else {
-								System.out.println("mouseWheelMoved DOWN"); // Rotation Left
 								a= -0.1;
 							}
 							
@@ -960,7 +939,6 @@ public class main {
 				}
 					break;
 				case 13:{	//shearing Y
-					System.out.println("shearing Y");
 					// clean the canvas
 					pane.fillCanvas(Color.WHITE);
 					
@@ -976,11 +954,8 @@ public class main {
 							
 							
 							if (e.getWheelRotation() > 0) {
-								System.out.println("mouseWheelMoved UP"); // Rotation Right
-								System.out.println("Rotation Right");
 								b = 0.1;
 							} else {
-								System.out.println("mouseWheelMoved DOWN"); // Rotation Left
 								b= -0.1;
 							}
 							
@@ -1005,8 +980,6 @@ public class main {
 		frame.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				System.out.println("Released	(x=" + (e.getX() - 8) + ", y="
-						+ (e.getY() - 53) + ")");
 				pointRelease = new Point(e.getPoint().x - 8,
 						e.getPoint().y - 53);
 
@@ -1060,8 +1033,6 @@ public class main {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				System.out.println("Pressed		(x=" + (e.getX() - 8) + ", y="
-						+ (e.getY() - 53) + ")");
 				pointPressed = new Point(e.getPoint().x - 8,
 						e.getPoint().y - 53);
 
@@ -1069,22 +1040,16 @@ public class main {
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				System.out.println("Exited		(x=" + (e.getX() - 8) + ", y="
-						+ (e.getY() - 53) + ")");
 				// MouseExitFromWindow=true;
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				System.out.println("Entered		(x=" + (e.getX() - 8) + ", y="
-						+ (e.getY() - 53) + ")");
 				// MouseExitFromWindow=false;
 			}
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("Clicked		(x=" + (e.getX() - 8) + ", y="
-						+ (e.getY() - 53) + ")");
 
 				if ((itemChecked == 4) && (bezierPoints.size() <= 4)) { // shape 4 = bezier curve
 					pane.putSuperPixel(e.getX() - 8, e.getY() - 53, color); // put big pixel + Fix
@@ -1106,15 +1071,11 @@ public class main {
 		frame.addMouseMotionListener(new MouseMotionListener() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				System.out.println("Moved		(x=" + (e.getX() - 8) + ", y="
-						+ (e.getY() - 53) + ")");
 				currMousePoint = new Point(e.getX()-8, e.getY()-53);
 			}
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				System.out.println("Dragged		(x=" + (e.getX() - 8) + ", y="
-						+ (e.getY() - 53) + ")");
 				lastDrag_x = (int) e.getPoint().getX() - 8; // Fix
 				lastDrag_y = (int) e.getPoint().getY() - 53; // Fix
 
@@ -1139,7 +1100,6 @@ public class main {
 					}
 					break;
 				case 12:
-					System.out.println("Shearing");
 					double shearingRate=1;
 					// clean the canvas
 					pane.fillCanvas(Color.WHITE);
@@ -1161,7 +1121,6 @@ public class main {
 							Matrix mirrorYMatrix2 = new Matrix(mirrorXYMatrix);
 							// Matrix A * Matrix B
 							Matrix mirrorXYresult = mirrorXY.times(mirrorYMatrix2);
-							System.out.println(mirrorXYresult.toString());
 
 							// Set new points for object
 							s.getPoints().get(i).x = (int) mirrorXYresult.get(0, 0);
