@@ -55,7 +55,6 @@ public class Poligon extends Shape {
 	@Override
 	public void draw(){
 		main.pane.regularPolygon(color, points, poligon_vertex);
-		System.out.println(this.toString());
 	}
 	
 	@Override

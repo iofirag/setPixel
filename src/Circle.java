@@ -130,9 +130,6 @@ public class Circle extends Shape {
 	
 	@Override
 	public String toString(){
-		//NamedColor nc;
-		//nc.compareTo();
-		
 		return "2,"
 			+points.get(0).x + ","	//x0
 			+points.get(0).y + ","	//y0

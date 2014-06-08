@@ -358,6 +358,8 @@ public class main {
 						bw.write(s.toString() + '\n');
 					}
 					bw.close();
+					
+					JOptionPane.showMessageDialog(null, "Saved successfully!");
 
 				} catch (IOException e) {
 					e.printStackTrace();

@@ -45,33 +45,12 @@ public class Bezier extends Shape {
 	/* Draw*/
 	@Override
 	public void draw(){
-		/*System.out.println("x0="+points.get(0).x);
-		System.out.println("y0="+points.get(0).y);
-		System.out.println("x1="+points.get(1).x);
-		System.out.println("y1="+points.get(1).y);
-		System.out.println("x2="+points.get(2).x);
-		System.out.println("y2="+points.get(2).y);
-		System.out.println("x3="+points.get(3).x);
-		System.out.println("y3="+points.get(3).y);*/
-		
 		main.pane.drawBezierCurve(color, points);
-		
-		/*System.out.println("\nx0="+points.get(0).x);
-		System.out.println("y0="+points.get(0).y);
-		System.out.println("x1="+points.get(1).x);
-		System.out.println("y1="+points.get(1).y);
-		System.out.println("x2="+points.get(2).x);
-		System.out.println("y2="+points.get(2).y);
-		System.out.println("x3="+points.get(3).x);
-		System.out.println("y3="+points.get(3).y);*/
 	}
 	
 	@Override
 	public String toString(){
-		//NamedColor nc;
-		//nc.compareTo();
-		
-		
+
 		return "4,"
 			+points.get(0).x + ","	//A.x
 			+points.get(0).y + ","	//A.y
