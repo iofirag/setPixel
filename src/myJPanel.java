@@ -114,36 +114,6 @@ public class myJPanel extends JPanel {
 		repaint();
 	}
 
-	
-
-	// Implementation of circle drawing algorithm
-//	public void drawCircle(Color c, List<Point> points, int radius) {
-//		int x = radius;
-//		int y = 0;
-//		
-//		int x0 = (int) points.get(0).getX();
-//		int y0 = (int) points.get(0).getY();
-//		int radiusError = 1 - x;
-//
-//		while (x >= y) {
-//			putPixel(x0 + x,	y0 + y,		c);
-//			putPixel(x0 + y,	y0 + x, 	c);
-//			putPixel(x0 + -x,	y0 + y, 	c);
-//			putPixel(x0 + -y,	y0 + x, 	c);
-//			putPixel(x0 + -x,	y0 + -y,	c);
-//			putPixel(x0 + -y,	y0 + -x,	c);
-//			putPixel(x0 + x,	y0 + -y,	c);
-//			putPixel(x0 + y,	y0 + -x,	c);
-//			y++;
-//			if (radiusError < 0) {
-//				radiusError += 2 * y + 1;
-//			} else {
-//				x--;
-//				radiusError += 2 * (y - x + 1);
-//			}
-//		}
-//		repaint();
-//	}
 
 	public void drawCircle(Color c, List<Point> points) {
 		int radius = Circle.calculateRadius(points);
